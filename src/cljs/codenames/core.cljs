@@ -563,8 +563,126 @@
             ;; Otherwise, lose!
             (lose! game)))))
 
+;; Subs
+
+(defn cell-filterer
+  [[x y :as target] {:keys [position]}]
+  (= target position))
+
+(defn get-cell
+  [x y]
+  (S/select-any [:words (S/filterer #(cell-filterer [x y] %)) S/ALL] @game))
+
+(defn get-current-team
+  []
+  (S/select-any [:current-team] @game))
+
+(defn get-revealed-status
+  []
+  (S/select-any [:revealed?] @game))
+
+(defn get-view
+  []
+  (S/select-any [:view] @game))
+
+(defn get-winner
+  []
+  (S/select-any [:winning-team] @game))
+
+;; (re-frame/reg-sub
+;;  :cell
+;;  (fn [db [_ x y]]
+;;    (get-cell db x y)))
+
+;; (re-frame/reg-sub
+;;  :game
+;;  (fn [db _]
+;;    (:game db)))
+
+;; (re-frame/reg-sub
+;;  :revealed
+;;  (fn [db _]
+;;    (get-revealed-status db)) )
+
+;; (re-frame/reg-sub
+;;  :turn
+;;  (fn [db _]
+;;    (get-current-team db)))
+
+;; (re-frame/reg-sub
+;;  :view
+;;  (fn [db _]
+;;    (get-view db)))
+
+;; (re-frame/reg-sub
+;;  :winner
+;;  (fn [db _]
+;;    (get-winner db)))
+
+
 ;; -------------------------
 ;; Views
+
+(defn colorize [word identity]
+  (case identity
+    :blue [:div {:style {:color "blue"}}
+           word]
+    :red [:div {:style {:color "red"}}
+          word]
+    :assassin [:div {:style {:color "grey"}}
+               word]
+    :neutral [:div {:style {:color "black"}}
+              word]))
+
+;; (defn cell [x y]
+;;   (let [c               (deref (re-frame/subscribe [:cell x y]))
+;;         winner          (re-frame/subscribe [:winner])
+;;         view            (re-frame/subscribe [:view])
+;;         revealed-status (re-frame/subscribe [:revealed])
+;;         word            (:word c) ;; probably need more subscribes here
+;;         identity        (:identity c)]
+;;     (fn []
+;;       (if @winner
+;;         [:span
+;;          [colorize word identity]]
+;;         (if (true? @revealed-status)
+;;           [:span {:style {:width 30
+;;                           :height 30}}
+;;            [colorize word identity]]  
+;;           [:button {:on-click #(re-frame/dispatch [:move word])
+;;                     :style {:width 100
+;;                             :height 100}}
+;;            [colorize word identity]])))))
+
+;; (defn grid []
+;;   [:table
+;;    (for [y (range 5)]
+;;      [:tr
+;;       (for [x (range 5)]
+;;         [:td {:style {:width 100
+;;                       :height 100
+;;                       :text-align :center}}
+;;          [cell x y]])])])
+
+;; (defn main-panel []
+;;   (let [game   (re-frame/subscribe [:game])
+;;         turn   (re-frame/subscribe [:turn])
+;;         winner (re-frame/subscribe [:winner])]
+;;     (fn []
+;;       [:div
+;;        (if @winner
+;;          [:div
+;;           (clojure.string/capitalize (name @winner)) " is the winner."]
+;;          [:div
+;;           "It's " (name @turn) "'s turn."]) 
+;;        [:center
+;;         [:p
+;;          [grid]]
+;;         [:p
+;;          [:button {:on-click #(re-frame/dispatch [:initialize-db])}
+;;           "RESET"]]]
+;;        [:p
+;;         @game]])))
 
 (defn home-page []
   [:div [:h2 "Welcome to Codenames"]
