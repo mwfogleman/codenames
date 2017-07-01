@@ -1,7 +1,7 @@
 (ns codenames.core
   (:require [cljs-time.core :as t]
             [com.rpl.specter :as S]
-            [reagent.core :as reagent :refer [atom]]
+            [reagent.core :as reagent]
             [secretary.core :as secretary :include-macros true]
             [accountant.core :as accountant]))
 
@@ -450,6 +450,8 @@
          (hash-map :words)
          (merge metadata))))
 
+(defonce game (reagent/atom (prepare-game)))
+
 ;; Game Play
 
 (defn in?
@@ -571,7 +573,7 @@
 ;; -------------------------
 ;; Routes
 
-(def page (atom #'home-page))
+(def page (reagent/atom #'home-page))
 
 (defn current-page []
   [:div [@page]])
