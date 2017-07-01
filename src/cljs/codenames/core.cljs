@@ -452,6 +452,9 @@
 
 (defonce game (reagent/atom (prepare-game)))
 
+(defn new-game []
+  (reset! game (prepare-game)))
+
 ;; Game Play
 
 (defn in?
