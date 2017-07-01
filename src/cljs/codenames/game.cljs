@@ -19,7 +19,7 @@
 
 (defn get-words
   []
-  (->> codenames-reagent.dictionaries/dictionary
+  (->> codenames.dictionaries/dictionary
        shuffle
        (take 25)))
 

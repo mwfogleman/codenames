@@ -1,5 +1,5 @@
 (ns codenames.moves
-  (:require [codenames-cljs.game :as game]
+  (:require [codenames.game :as game]
             [com.rpl.specter :as S]))
 
 (defn in?
