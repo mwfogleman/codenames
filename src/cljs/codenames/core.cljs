@@ -562,12 +562,11 @@
 ;; Views
 
 (defn home-page []
-  [:div [:h2 "Welcome to codenames"]
-   [:div [:a {:href "/about"} "go to about page"]]])
+  [:div [:h2 "Welcome to Codenames"]
+   [:div [:a {:href "/game"} "Play a game!"]]])
 
-(defn about-page []
-  [:div [:h2 "About codenames"]
-   [:div [:a {:href "/"} "go to the home page"]]])
+(defn game-page []
+  [:div [:h2 "Codenames"]])
 
 ;; -------------------------
 ;; Routes
@@ -580,8 +579,8 @@
 (secretary/defroute "/" []
   (reset! page #'home-page))
 
-(secretary/defroute "/about" []
-  (reset! page #'about-page))
+(secretary/defroute "/game" []
+  (reset! page #'game-page))
 
 ;; -------------------------
 ;; Initialize app
