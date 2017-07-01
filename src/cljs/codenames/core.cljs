@@ -575,50 +575,19 @@
 
 (defn get-current-team
   []
-  (S/select-any [:current-team] @game))
+  (:current-team @game))
 
 (defn get-revealed-status
   []
-  (S/select-any [:revealed?] @game))
+  (:revealed? @game))
 
 (defn get-view
   []
-  (S/select-any [:view] @game))
+  (:view @game))
 
 (defn get-winner
   []
-  (S/select-any [:winning-team] @game))
-
-;; (re-frame/reg-sub
-;;  :cell
-;;  (fn [db [_ x y]]
-;;    (get-cell db x y)))
-
-;; (re-frame/reg-sub
-;;  :game
-;;  (fn [db _]
-;;    (:game db)))
-
-;; (re-frame/reg-sub
-;;  :revealed
-;;  (fn [db _]
-;;    (get-revealed-status db)) )
-
-;; (re-frame/reg-sub
-;;  :turn
-;;  (fn [db _]
-;;    (get-current-team db)))
-
-;; (re-frame/reg-sub
-;;  :view
-;;  (fn [db _]
-;;    (get-view db)))
-
-;; (re-frame/reg-sub
-;;  :winner
-;;  (fn [db _]
-;;    (get-winner db)))
-
+  (:winning-team @game))
 
 ;; -------------------------
 ;; Views
