@@ -653,7 +653,7 @@
 ;; -------------------------
 ;; Routes
 
-(def page (reagent/atom #'home-page))
+(def page (reagent/atom #'game-page))
 
 (defn current-page []
   [:div [@page]])
