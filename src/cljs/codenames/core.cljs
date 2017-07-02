@@ -452,7 +452,7 @@
 
 (defonce game (reagent/atom (prepare-game)))
 
-(defn new-game []
+(defn new-game! []
   (reset! game (prepare-game)))
 
 ;; Game Play
@@ -520,10 +520,6 @@
        (S/select-any [S/ATOM :winning-team])
        (some?)))
 
-(defn get-current-team
-  [game]
-  (S/select-any [S/ATOM :current-team] game))
-
 (defn- get-id-of-word [game word]
   (S/select-any [S/ATOM :words (S/filterer #(word-filterer word %)) S/ALL :identity] game))
 
@@ -570,23 +566,23 @@
   (= target position))
 
 (defn get-cell
-  [x y]
+  [game x y]
   (S/select-any [:words (S/filterer #(cell-filterer [x y] %)) S/ALL] @game))
 
 (defn get-current-team
-  []
+  [game]
   (:current-team @game))
 
 (defn get-revealed-status
-  []
-  (:revealed? @game))
+  [game x y]
+  (:revealed? (get-cell game x y)))
 
 (defn get-view
-  []
+  [game]
   (:view @game))
 
 (defn get-winner
-  []
+  [game]
   (:winning-team @game))
 
 ;; -------------------------
@@ -594,71 +590,65 @@
 
 (defn colorize [word identity]
   (case identity
-    :blue [:div {:style {:color "blue"}}
-           word]
-    :red [:div {:style {:color "red"}}
-          word]
+    :blue     [:div {:style {:color "blue"}}
+               word]
+    :red      [:div {:style {:color "red"}}
+               word]
     :assassin [:div {:style {:color "grey"}}
                word]
-    :neutral [:div {:style {:color "black"}}
-              word]))
+    :neutral  [:div {:style {:color "black"}}
+               word]))
 
-;; (defn cell [x y]
-;;   (let [c               (deref (re-frame/subscribe [:cell x y]))
-;;         winner          (re-frame/subscribe [:winner])
-;;         view            (re-frame/subscribe [:view])
-;;         revealed-status (re-frame/subscribe [:revealed])
-;;         word            (:word c) ;; probably need more subscribes here
-;;         identity        (:identity c)]
-;;     (fn []
-;;       (if @winner
-;;         [:span
-;;          [colorize word identity]]
-;;         (if (true? @revealed-status)
-;;           [:span {:style {:width 30
-;;                           :height 30}}
-;;            [colorize word identity]]  
-;;           [:button {:on-click #(re-frame/dispatch [:move word])
-;;                     :style {:width 100
-;;                             :height 100}}
-;;            [colorize word identity]])))))
+(defn cell [game x y]
+  (let [{:keys [word identity revealed?]} (get-cell game x y)
+        winner                            (get-winner game)
+        view                              (get-view game)]
+    (fn []
+      (if winner
+        [:span
+         [colorize word identity]]
+        (if (true? revealed?)
+          [:span {:style {:width 30
+                          :height 30}}
+           [colorize word identity]]
+          [:button {:on-click #(move! game word)
+                    :style {:width 100
+                            :height 100}}
+           [colorize word identity]])))))
 
-;; (defn grid []
-;;   [:table
-;;    (for [y (range 5)]
-;;      [:tr
-;;       (for [x (range 5)]
-;;         [:td {:style {:width 100
-;;                       :height 100
-;;                       :text-align :center}}
-;;          [cell x y]])])])
+(defn grid [game]
+  [:table
+   (for [y (range 5)]
+     [:tr
+      (for [x (range 5)]
+        [:td {:style {:width      100
+                      :height     100
+                      :text-align :center}}
+         [cell game x y]])])])
 
-;; (defn main-panel []
-;;   (let [game   (re-frame/subscribe [:game])
-;;         turn   (re-frame/subscribe [:turn])
-;;         winner (re-frame/subscribe [:winner])]
-;;     (fn []
-;;       [:div
-;;        (if @winner
-;;          [:div
-;;           (clojure.string/capitalize (name @winner)) " is the winner."]
-;;          [:div
-;;           "It's " (name @turn) "'s turn."]) 
-;;        [:center
-;;         [:p
-;;          [grid]]
-;;         [:p
-;;          [:button {:on-click #(re-frame/dispatch [:initialize-db])}
-;;           "RESET"]]]
-;;        [:p
-;;         @game]])))
+(defn main-panel [game]
+  (let [turn   (get-current-team game)
+        winner (get-winner game)]
+    (fn []
+      [:div
+       (if winner
+         [:div
+          (clojure.string/capitalize (name winner)) " is the winner."]
+         [:div
+          "It's " (name turn) "'s turn."])
+       [:center
+        [:p
+         [grid game]]]
+       [:p
+        @game]])))
 
 (defn home-page []
   [:div [:h2 "Welcome to Codenames"]
    [:div [:a {:href "/game"} "Play a game!"]]])
 
 (defn game-page []
-  [:div [:h2 "Codenames"]])
+  [:div [:h2 "Codenames"]]
+  [main-panel game])
 
 ;; -------------------------
 ;; Routes
