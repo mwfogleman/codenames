@@ -450,9 +450,7 @@
          (hash-map :words)
          (merge metadata))))
 
-(defonce game (reagent/atom (prepare-game)))
-
-(defn new-game! []
+(defn new-game! [game]
   (reset! game (prepare-game)))
 
 ;; Game Play
@@ -596,7 +594,7 @@
                word]
     :assassin [:div {:style {:color "grey"}}
                word]
-    :neutral  [:div {:style {:color "black"}}
+    :neutral  [:div {:style {:color "yellow"}}
                word]))
 
 (defn cell [game x y]
@@ -614,7 +612,8 @@
           [:button {:on-click #(move! game word)
                     :style {:width 100
                             :height 100}}
-           [colorize word identity]])))))
+           [:div {:style {:color "black"}}
+            word]])))))
 
 (defn grid [game]
   [:table
@@ -647,8 +646,9 @@
    [:div [:a {:href "/game"} "Play a game!"]]])
 
 (defn game-page []
-  [:div [:h2 "Codenames"]]
-  [main-panel game])
+  (let [game (reagent/atom (prepare-game))]
+    [:div [:h2 "Codenames"]
+     [main-panel game]]))
 
 ;; -------------------------
 ;; Routes
