@@ -499,7 +499,9 @@
 
 ;; get-revealed-status
 ;; get-view
-;; get-winner
+
+(defn get-view [] (:view @game))
+
 ;; get-id-of-word
 ;; get-remaining
 ;; update-remaining!
