@@ -481,9 +481,7 @@
 ;; reveal!
 ;; next-round!
 
-(defn next-round! []
-  ;; (S/transform [S/ATOM :round] inc game)
-  (swap! game update :round inc))
+(defn next-round! [] (swap! game update :round inc)) ;; (S/transform [S/ATOM :round] inc game)
 
 ;; opposite-team
 ;; switch-teams!
@@ -495,9 +493,7 @@
 ;; get-cell
 ;; get-current-team
 
-(defn get-current-team
-  []
-  (:current-team @game))
+(defn get-current-team [] (:current-team @game))
 
 ;; get-revealed-status
 ;; get-view
