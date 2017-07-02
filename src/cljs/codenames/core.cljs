@@ -518,6 +518,30 @@
        (S/select-any [S/ATOM :winning-team])
        (some?)))
 
+(defn cell-filterer
+  [target {:keys [position]}]
+  (= target position))
+
+(defn get-cell
+  [game x y]
+  (S/select-any [:words (S/filterer #(cell-filterer [x y] %)) S/ALL] @game))
+
+(defn get-current-team
+  [game]
+  (:current-team @game))
+
+(defn get-revealed-status
+  [game x y]
+  (:revealed? (get-cell game x y)))
+
+(defn get-view
+  [game]
+  (:view @game))
+
+(defn get-winner
+  [game]
+  (:winning-team @game))
+
 (defn- get-id-of-word [game word]
   (S/select-any [S/ATOM :words (S/filterer #(word-filterer word %)) S/ALL :identity] game))
 
@@ -556,32 +580,6 @@
             (win! game)
             ;; Otherwise, lose!
             (lose! game)))))
-
-;; Subs
-
-(defn cell-filterer
-  [target {:keys [position]}]
-  (= target position))
-
-(defn get-cell
-  [game x y]
-  (S/select-any [:words (S/filterer #(cell-filterer [x y] %)) S/ALL] @game))
-
-(defn get-current-team
-  [game]
-  (:current-team @game))
-
-(defn get-revealed-status
-  [game x y]
-  (:revealed? (get-cell game x y)))
-
-(defn get-view
-  [game]
-  (:view @game))
-
-(defn get-winner
-  [game]
-  (:winning-team @game))
 
 ;; -------------------------
 ;; Views
