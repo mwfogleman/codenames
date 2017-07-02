@@ -659,7 +659,7 @@
   [:div [@page]])
 
 (secretary/defroute "/" []
-  (reset! page #'home-page))
+  (reset! page #'game-page))
 
 (secretary/defroute "/game" []
   (reset! page #'game-page))
