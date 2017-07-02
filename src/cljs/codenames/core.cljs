@@ -639,7 +639,7 @@
         [:p
          [grid game]]]
        [:p
-        @game]])))
+        game]])))
 
 (defn home-page []
   [:div [:h2 "Welcome to Codenames"]
