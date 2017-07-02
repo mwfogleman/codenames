@@ -462,6 +462,45 @@
   [collection element]
   (some #(= element %) collection))
 
+(defn opposite-team [team]
+  (if (= team :red)
+    :blue
+    :red))
+
+(defn winner?
+  "If a game has a winner, return true. If not, return false."
+  []
+  (some? (:winning-team @game)))
+
+;; DELETED FUNCTIONS
+;; word-filterer
+;; valid-word?
+;; revealed?
+;; hidden?
+;; get-freqs
+;; reveal!
+;; next-round!
+;; opposite-team
+;; switch-teams!
+;; next-turn!
+;; win!
+;; lose!
+;; winner?
+;; cell-filterer
+;; get-cell
+;; get-current-team
+;; get-revealed-status
+;; get-view
+;; get-winner
+;; get-id-of-word
+;; get-remaining
+;; update-remaining!
+;; move!
+;; colorize
+;; cell
+;; grid
+;; main-panel
+
 ;; -------------------------
 ;; Views
 
@@ -487,11 +526,11 @@
 
 (defn init! []
   (accountant/configure-navigation!
-    {:nav-handler
-     (fn [path]
-       (secretary/dispatch! path))
-     :path-exists?
-     (fn [path]
-       (secretary/locate-route path))})
+   {:nav-handler
+    (fn [path]
+      (secretary/dispatch! path))
+    :path-exists?
+    (fn [path]
+      (secretary/locate-route path))})
   (accountant/dispatch-current!)
   (mount-root))
