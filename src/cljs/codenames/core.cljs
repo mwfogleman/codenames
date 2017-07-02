@@ -467,12 +467,8 @@
     :blue
     :red))
 
-(defn get-winner [] (:winning-team @game))
+(defn get-current-team [] (:current-team @game))
 
-(defn winner?
-  "If a game has a winner, return true. If not, return false."
-  []
-  (some? (get-winner)))
 
 ;; DELETED FUNCTIONS
 ;; word-filterer
@@ -481,21 +477,42 @@
 ;; hidden?
 ;; get-freqs
 ;; reveal!
-;; next-round!
 
 (defn next-round! [] (swap! game update :round inc)) ;; (S/transform [S/ATOM :round] inc game)
 
 ;; opposite-team
 ;; switch-teams!
 ;; next-turn!
-;; win!
-;; lose!
-;; winner?
+
+(defn set-winner!
+  [winner]
+  (swap! game assoc :winning-team winner))
+
+(defn win!
+  "Makes the current team win the game."
+  []
+  (let [winner (get-current-team)]
+    (set-winner! winner)))
+
+(defn lose!
+  "Makes the current team lose the game."
+  []
+  (let [loser  (get-current-team)
+        winner (opposite-team loser)]
+    (set-winner! winner)))
+
+(defn get-winner [] (:winning-team @game))
+
+(defn winner?
+  "If a game has a winner, return true. If not, return false."
+  []
+  (some? (get-winner)))
+
 ;; cell-filterer
 ;; get-cell
 ;; get-current-team
 
-(defn get-current-team [] (:current-team @game))
+
 
 ;; get-revealed-status
 ;; get-view
