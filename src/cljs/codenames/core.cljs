@@ -450,6 +450,8 @@
          (hash-map :words)
          (merge metadata))))
 
+(defonce game (reagent/atom (prepare-game)))
+
 (defn new-game! [game]
   (reset! game (prepare-game)))
 
