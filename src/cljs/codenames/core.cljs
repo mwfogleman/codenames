@@ -560,7 +560,7 @@
 ;; Subs
 
 (defn cell-filterer
-  [[x y :as target] {:keys [position]}]
+  [target {:keys [position]}]
   (= target position))
 
 (defn get-cell
