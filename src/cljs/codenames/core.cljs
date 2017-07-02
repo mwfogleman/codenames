@@ -494,6 +494,11 @@
 ;; cell-filterer
 ;; get-cell
 ;; get-current-team
+
+(defn get-current-team
+  []
+  (:current-team @game))
+
 ;; get-revealed-status
 ;; get-view
 ;; get-winner
