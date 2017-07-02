@@ -599,8 +599,7 @@
 
 (defn cell [game x y]
   (let [{:keys [word identity revealed?]} (get-cell game x y)
-        winner                            (get-winner game)
-        view                              (get-view game)]
+        winner                            (get-winner game)]
     (fn []
       (if winner
         [:span
