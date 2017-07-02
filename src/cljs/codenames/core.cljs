@@ -467,10 +467,12 @@
     :blue
     :red))
 
+(defn get-winner [] (:winning-team @game))
+
 (defn winner?
   "If a game has a winner, return true. If not, return false."
   []
-  (some? (:winning-team @game)))
+  (some? (get-winner)))
 
 ;; DELETED FUNCTIONS
 ;; word-filterer
