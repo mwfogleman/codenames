@@ -480,6 +480,11 @@
 ;; get-freqs
 ;; reveal!
 ;; next-round!
+
+(defn next-round! []
+  ;; (S/transform [S/ATOM :round] inc game)
+  (swap! game update :round inc))
+
 ;; opposite-team
 ;; switch-teams!
 ;; next-turn!
