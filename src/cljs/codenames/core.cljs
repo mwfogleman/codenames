@@ -469,23 +469,37 @@
 
 (defn get-current-team [] (:current-team @game))
 
-;; DELETED FUNCTIONS
-;; word-filterer
-
 (defn valid-word? [word]
   (let [words (S/select [S/ATOM :words S/ALL :word] game)]
     (in? words word)))
 
-;; revealed?
-;; hidden?
-;; get-freqs
-;; reveal!
+(defn word-filterer [w {:keys [word]}]
+  (= word w))
+
+(defn revealed? [word]
+  (S/select-any [S/ATOM :words (S/filterer #(word-filterer word %)) S/ALL :revealed?] game))
+
+(def hidden? (complement revealed?))
+
+(defn get-freqs []
+  (let [words (S/select [S/ATOM :words S/ALL] game)
+        get-attributes (juxt :identity :revealed?)]
+    (->> words
+         (map get-attributes)
+         (frequencies))))
+
+(defn reveal! [word]
+  (S/setval [S/ATOM :words (S/filterer #(word-filterer word %)) S/ALL :revealed?]
+            true game))
 
 (defn next-round! [] (swap! game update :round inc)) ;; (S/transform [S/ATOM :round] inc game) also works - seems specter is not the problem, you just need to use # before the function
 
-;; opposite-team
-;; switch-teams!
-;; next-turn!
+(defn switch-teams! []
+  (S/transform [S/ATOM :current-team] opposite-team game))
+
+(defn next-turn! []
+  (next-round!)
+  (switch-teams!))
 
 (defn set-winner!
   [winner]
@@ -511,32 +525,120 @@
   []
   (some? (get-winner)))
 
-;; cell-filterer
-;; get-cell
+(defn cell-filterer
+  [target {:keys [position]}]
+  (= target position))
 
-;; get-current-team
+(defn get-cell
+  [x y]
+  (S/select-any [S/ATOM :words (S/filterer #(cell-filterer [x y] %)) S/ALL] game))
 
-;; get-revealed-status
-;; get-view
+(defn get-revealed-status
+  [x y]
+  (:revealed? (get-cell x y)))
 
 (defn get-view [] (:view @game))
 
-;; get-id-of-word
 (defn get-id-of-word
   [w]
   (let [words (:words @game)]
     (:identity (first (filter (fn [{:keys [word]}] (= w word)) words)))))
 
-;; get-remaining
-;; update-remaining!
-;; move!
-;; colorize
-;; cell
-;; grid
-;; main-panel
+(defn get-remaining
+  []
+  (S/select-any [S/ATOM (S/submap [:blue-remaining :red-remaining])] game))
+
+(defn update-remaining!
+  []
+  (let [frqs           (get-freqs)
+        blue-remaining (get frqs [:blue false])
+        red-remaining  (get frqs [:red false])]
+    (S/setval [S/ATOM :blue-remaining] blue-remaining game)
+    (S/setval [S/ATOM :red-remaining]  red-remaining game)))
+
+(defn move! [word]
+  {:pre [(valid-word? word)
+         (hidden? word)
+         (= false (winner?))]}
+  (reveal! word)
+  (update-remaining!)
+  (let [current-team                           (get-current-team)
+        id                                     (get-id-of-word word)
+        match-result                           (= id current-team) ;; Register whether they picked someone on their team, or on the other team.
+        {:keys [blue-remaining red-remaining]} (get-remaining)]
+    (cond (= id :assassin) (lose!)
+          (and (> blue-remaining 0) (> red-remaining 0)) ;; Check if there are remaining hidden cards for either team.
+          ;; If they picked someone on their team, they can keep moving
+          ;; If they picked someone from the other team, switch to make it the other team's turn.
+          (if (true? match-result)
+            game
+            (next-turn!))
+          :else
+          (if (true? match-result)
+            ;; If the card picked was theirs, win!
+            (win!)
+            ;; Otherwise, lose!
+            (lose!)))))
 
 ;; -------------------------
 ;; Views
+
+(defn colorize [word identity]
+  (case identity
+    :blue     [:div {:style {:color "blue"}}
+               word]
+    :red      [:div {:style {:color "red"}}
+               word]
+    :assassin [:div {:style {:color "grey"}}
+               word]
+    :neutral  [:div {:style {:color "yellow"}}
+               word]))
+
+(defn cell [x y]
+  (let [m @game
+        {:keys [word identity revealed?]} (get-cell x y)
+        winner                            (get-winner)]
+    (fn []
+      (if winner
+        [:span
+         [colorize word identity]]
+        (if (true? revealed?)
+          [:span {:style {:width 30
+                          :height 30}}
+           [colorize word identity]]
+          [:button {:on-click #(move! word)
+                    :style {:width 100
+                            :height 100}}
+           [:div {:style {:color "black"}}
+            word]])))))
+
+(defn grid []
+  (let [m @game]
+    [:table
+     (for [y (range 5)]
+       [:tr
+        (for [x (range 5)]
+          [:td {:style {:width      100
+                        :height     100
+                        :text-align :center}}
+           [cell x y]])])]))
+
+(defn main-panel []
+  (let [m @game
+        turn   (get-current-team)
+        winner (get-winner)]
+    (fn []
+      [:div
+       (if winner
+         [:div
+          (clojure.string/capitalize (name winner)) " is the winner."]
+         [:div
+          "It's " (name turn) "'s turn."])
+       [:center
+        [:p
+         [grid]]]
+       [:p
+        game]])))
 
 (defn test-button []
   [:div
@@ -551,8 +653,8 @@
 
 (defn home-page []
   [:div [:h2 "Codenames"]
-   [inspector]
-   [test-button]])
+   [main-panel]
+   [inspector]])
 
 ;; -------------------------
 ;; Routes
