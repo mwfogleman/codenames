@@ -471,7 +471,11 @@
 
 ;; DELETED FUNCTIONS
 ;; word-filterer
-;; valid-word?
+
+(defn valid-word? [word]
+  (let [words (S/select [S/ATOM :words S/ALL :word] game)]
+    (in? words word)))
+
 ;; revealed?
 ;; hidden?
 ;; get-freqs
