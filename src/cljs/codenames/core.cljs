@@ -469,7 +469,6 @@
 
 (defn get-current-team [] (:current-team @game))
 
-
 ;; DELETED FUNCTIONS
 ;; word-filterer
 ;; valid-word?
@@ -478,7 +477,7 @@
 ;; get-freqs
 ;; reveal!
 
-(defn next-round! [] (swap! game update :round inc)) ;; (S/transform [S/ATOM :round] inc game)
+(defn next-round! [] (swap! game update :round inc)) ;; (S/transform [S/ATOM :round] inc game) also works - seems specter is not the problem, you just need to use # before the function
 
 ;; opposite-team
 ;; switch-teams!
@@ -510,9 +509,8 @@
 
 ;; cell-filterer
 ;; get-cell
+
 ;; get-current-team
-
-
 
 ;; get-revealed-status
 ;; get-view
@@ -520,6 +518,11 @@
 (defn get-view [] (:view @game))
 
 ;; get-id-of-word
+(defn get-id-of-word
+  [w]
+  (let [words (:words @game)]
+    (:identity (first (filter (fn [{:keys [word]}] (= w word)) words)))))
+
 ;; get-remaining
 ;; update-remaining!
 ;; move!
@@ -531,8 +534,21 @@
 ;; -------------------------
 ;; Views
 
+(defn test-button []
+  [:div
+   [:input.btn {:type "button" :value "Next Round!"
+                :on-click #(next-round!)}]])
+
+(defn inspector []
+  (let [m @game]
+    [:div
+     (for [[k v] m]
+       [:div (str (->> k name clojure.string/capitalize) ": " v)])]))
+
 (defn home-page []
-  [:div [:h2 "Codenames"]])
+  [:div [:h2 "Codenames"]
+   [inspector]
+   [test-button]])
 
 ;; -------------------------
 ;; Routes
