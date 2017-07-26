@@ -584,15 +584,16 @@
 ;; Views
 
 (defn colorize [word identity]
-  (case identity
-    :blue     [:div {:style {:color "blue"}}
-               word]
-    :red      [:div {:style {:color "red"}}
-               word]
-    :assassin [:div {:style {:color "grey"}}
-               word]
-    :neutral  [:div {:style {:color "yellow"}}
-               word]))
+  (let [m @game]
+    (case identity
+      :blue     [:div {:style {:color "blue"}}
+                 word]
+      :red      [:div {:style {:color "red"}}
+                 word]
+      :assassin [:div {:style {:color "grey"}}
+                 word]
+      :neutral  [:div {:style {:color "yellow"}}
+                 word])))
 
 (defn cell [x y]
   (let [m @game
@@ -636,9 +637,7 @@
           "It's " (name turn) "'s turn."])
        [:center
         [:p
-         [grid]]]
-       [:p
-        game]])))
+         [grid]]]])))
 
 (defn test-button []
   [:div
