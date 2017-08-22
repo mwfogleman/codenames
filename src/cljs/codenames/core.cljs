@@ -44,6 +44,78 @@
 ;; -------------------------
 ;; Views
 
+(defn colorize [word identity]
+  (let [m @game]
+    (case identity
+      :blue     [:div {:style {:color "blue"}}
+                 word]
+      :red      [:div {:style {:color "red"}}
+                 word]
+      :assassin [:div {:style {:color "grey"}}
+                 word]
+      :neutral  [:div {:style {:color "yellow"}}
+                 word])))
+
+(defn cell [x y]
+  (let [m @game
+        {:keys [word identity revealed?]} (get-cell x y)
+        winner                            (get-winner)]
+    (fn []
+      (if winner
+        [:span
+         [colorize word identity]]
+        (if (true? revealed?)
+          [:span {:style {:width 30
+                          :height 30}}
+           [colorize word identity]]
+          [:button {:on-click #(move! word)
+                    :style {:width 100
+                            :height 100}}
+           [:div {:style {:color "black"}}
+            word]])))))
+
+(defn grid []
+  (let [m @game]
+    [:table
+     (for [y (range 5)]
+       [:tr
+        (for [x (range 5)]
+          [:td {:style {:width      100
+                        :height     100
+                        :text-align :center}}
+           [cell x y]])])]))
+
+(defn main-panel []
+  (let [m @game
+        turn   (get-current-team)
+        winner (get-winner)]
+    (fn []
+      [:div
+       (if winner
+         [:div
+          (clojure.string/capitalize (name winner)) " is the winner."]
+         [:div
+          "It's " (name turn) "'s turn."])
+       [:center
+        [:p
+         [grid]]]])))
+
+(defn test-button []
+  [:div
+   [:input.btn {:type "button" :value "Next Round!"
+                :on-click #(next-round!)}]])
+
+(defn inspector []
+  (let [m @game]
+    [:div
+     (for [[k v] m]
+       [:div (str (->> k name clojure.string/capitalize) ": " v)])]))
+
+(defn home-page []
+  [:div [:h2 "Codenames"]
+   [main-panel]
+   [inspector]])
+
 (defn home-page []
   [:div [:h2 "Welcome to codenames"]
    [:div [:a {:href "/about"} "go to about page"]]])
