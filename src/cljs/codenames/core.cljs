@@ -113,11 +113,8 @@
 
 (defn home-page []
   [:div [:h2 "Codenames"]
-   [main-panel]
-   [inspector]])
-
-(defn home-page []
-  [:div [:h2 "Welcome to codenames"]
+   ;; [main-panel]
+   ;; [inspector]
    [:div [:a {:href "/about"} "go to about page"]]])
 
 (defn about-page []
