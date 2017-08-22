@@ -58,12 +58,24 @@
         winner (opposite-team loser)]
     (S/setval [S/ATOM :winning-team] winner game)))
 
+(defn get-winner [game] (:winning-team @game))
+
 (defn winner?
-  "If a GAME has a winner, return true. If not, return false."
+  "If a game has a winner, return true. If not, return false."
   [game]
-  (->> game
-       (S/select-any [S/ATOM :winning-team])
-       (some?)))
+  (some? (get-winner game)))
+
+(defn cell-filterer
+  [target {:keys [position]}]
+  (= target position))
+
+(defn get-cell
+  [game x y]
+  (S/select-any [S/ATOM :words (S/filterer #(cell-filterer [x y] %)) S/ALL] game))
+
+(defn get-revealed-status
+  [game x y]
+  (:revealed? (get-cell game x y)))
 
 (defn get-current-team
   [game]
