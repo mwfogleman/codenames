@@ -1,6 +1,6 @@
 (ns codenames.util)
 
-(defn foo-cljc [x]
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn in?
+  "True if the collection contains the element."
+  [collection element]
+  (some? (some #(= element %) collection)))
