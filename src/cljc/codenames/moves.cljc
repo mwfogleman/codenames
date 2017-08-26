@@ -93,11 +93,7 @@
   [game x y]
   (:revealed? (get-cell game x y)))
 
-(defn get-view
-  [game]
-  (:view @game))
-
-(defn- get-id-of-word [game word]
+(defn get-id-of-word [game word]
   (S/select-any [S/ATOM :words (S/filterer #(word-filterer word %)) S/ALL :identity] game))
 
 (defn get-remaining
@@ -107,8 +103,8 @@
 (defn update-remaining!
   [game]
   (let [frqs           (get-freqs game)
-        blue-remaining (get frqs [:blue false])
-        red-remaining  (get frqs [:red false])]
+        blue-remaining (get frqs [:blue false] 0)
+        red-remaining  (get frqs [:red false] 0)]
     (S/setval [S/ATOM :blue-remaining] blue-remaining game)
     (S/setval [S/ATOM :red-remaining]  red-remaining game)))
 
