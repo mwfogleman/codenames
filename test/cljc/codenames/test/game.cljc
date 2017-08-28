@@ -1,11 +1,13 @@
 (ns cljc.codenames.test.game
   #?(:clj
      (:require [codenames.game :as game]
+               [codenames.moves :as m]
                [codenames.util :refer [in?]]
                [com.rpl.specter :as S]
                [clojure.test :refer :all])
      :cljs
      (:require [codenames.game :as game]
+               [codenames.moves :as m]
                [codenames.util :refer [in?]]
                [com.rpl.specter :as S]
                [cljs.test :refer-macros [deftest is testing]])))
@@ -78,6 +80,15 @@
     (testing "Positions are less than five (zero-indexed)"
       (is (every? #(<= % 4)
                   position)))))
+
+(deftest starting-alliances-and-revealed-are-sensible
+  ;; All words should be hidden to start with, i.e. their revealed? status should be false.
+  ;; There should be 25 total, with 9 on one color and 8 on the other, 7 neutrals, and 1 assassin.
+  (let [freqs (m/get-freqs a-game)]
+    (is (or (= freqs
+               {[:blue false] 9, [:red false] 8, [:neutral false] 7, [:assassin false] 1})
+            (= freqs
+               {[:blue false] 8, [:red false] 9, [:neutral false] 7, [:assassin false] 1})))))
 
 (deftest we-can-reset-games
   (let [get-words     (fn [g] (S/select [S/ATOM :words S/ALL :word] g))
