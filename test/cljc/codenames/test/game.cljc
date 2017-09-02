@@ -45,7 +45,8 @@
 
 (deftest id-is-a-gensym-string
   (let [{:keys [id]} @a-game]
-    (is (string? id)))) ;; what is the function that checks if a string matches a regex, e.g. #"\.+\d+"?
+    (is (string? id))
+    (is (some? (re-seq #"\w*\_*\d+" id)))))
 
 (deftest words-tests
   (let [all-words                                  (-> @a-game :words)
