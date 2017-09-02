@@ -351,7 +351,6 @@
          :id "G__47795",
          :winning-team nil}))
 
-;; This test currently throws a null pointer exception?
 (deftest move-can-make-you-win-or-lose
   (testing "if there are no blue-remaining after your move, blue wins! (if you're blue, you win. if you're red, you lose.)"
     (let [initial-remaining (m/get-remaining one-blue-remaining)
