@@ -19,10 +19,7 @@
 (def a-game (atom (game/prepare-game)))
 
 (deftest game-is-a-map
-  (is (and (= (type a-game)
-              clojure.lang.Atom) ;; might change to ratom
-           (= (type @a-game)
-              clojure.lang.PersistentHashMap))))
+  (is (map? @a-game)))
 
 (deftest starting-team-is-current-team
   (let [{:keys [starting-team current-team]} @a-game]
