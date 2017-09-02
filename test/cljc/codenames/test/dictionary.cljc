@@ -11,9 +11,7 @@
 (deftest dictionary-is-not-empty
   (is (some? dictionary)))
 
-(deftest africa-comes-first
-  (is (-> dictionary first (= "AFRICA"))))
-
-(deftest witches-are-present
+(deftest certain-words-are-present
+  (is (in? dictionary "AFRICA"))
   (is (in? dictionary "WITCH")))
 
