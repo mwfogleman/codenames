@@ -81,7 +81,7 @@
 
 (deftest starting-alliances-and-revealed-are-sensible
   (let [freqs             (m/get-freqs a-game)
-        revealed-statuses (->> freqs keys (map second) )
+        revealed-statuses (->> freqs keys (map second))
         total             (->> freqs vals (apply +))
         hidden-civilians  (get freqs [:neutral false])
         hidden-assassins  (get freqs [:assassin false])
@@ -102,5 +102,3 @@
         _             (game/new-game! a-game)
         new-words     (get-words a-game)]
     (is (not= initial-words new-words))))
-
-

@@ -14,4 +14,3 @@
 (deftest certain-words-are-present
   (is (in? dictionary "AFRICA"))
   (is (in? dictionary "WITCH")))
-
