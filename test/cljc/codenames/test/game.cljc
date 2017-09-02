@@ -80,13 +80,21 @@
                   position)))))
 
 (deftest starting-alliances-and-revealed-are-sensible
-  ;; All words should be hidden to start with, i.e. their revealed? status should be false.
-  ;; There should be 25 total, with 9 on one color and 8 on the other, 7 neutrals, and 1 assassin.
-  (let [freqs (m/get-freqs a-game)]
-    (is (or (= freqs
-               {[:blue false] 9, [:red false] 8, [:neutral false] 7, [:assassin false] 1})
-            (= freqs
-               {[:blue false] 8, [:red false] 9, [:neutral false] 7, [:assassin false] 1})))))
+  (let [freqs             (m/get-freqs a-game)
+        revealed-statuses (->> freqs keys (map second) )
+        total             (->> freqs vals (apply +))
+        hidden-civilians  (get freqs [:neutral false])
+        hidden-assassins  (get freqs [:assassin false])
+        hidden-blue       (get freqs [:blue false])
+        hidden-red        (get freqs [:red false])]
+    ;; All words should be hidden to start with, i.e. their revealed? status should be false.
+    (is (every? false? revealed-statuses))
+    ;; There should be 25 total, with 9 on one color and 8 on the other, 7 neutrals, and 1 assassin.
+    (is (= total 25))
+    (is (or (= hidden-blue 8) (= hidden-blue 9)))
+    (is (or (= hidden-red 8) (= hidden-red 9)))
+    (is (= hidden-civilians 7))
+    (is (= hidden-assassins 1))))
 
 (deftest we-can-reset-games
   (let [get-words     (fn [g] (S/select [S/ATOM :words S/ALL :word] g))
