@@ -281,75 +281,79 @@
     (is (< initial-round new-round))
     (is (= new-round (inc initial-round)))))
 
-(def one-blue-remaining
-  (atom {:starting-team :red,
-         :blue-remaining 1,
-         :current-team :red,
-         :words
-         '({:word "POST", :identity :red, :revealed? false, :position [2 0]}
-           {:word "POISON", :identity :red, :revealed? false, :position [3 0]}
-           {:word "PISTOL", :identity :red, :revealed? false, :position [2 2]}
-           {:word "INDIA", :identity :red, :revealed? false, :position [0 1]}
-           {:word "POLICE", :identity :red, :revealed? false, :position [1 3]}
-           {:word "LINK", :identity :red, :revealed? false, :position [4 0]}
-           {:word "SPY", :identity :red, :revealed? false, :position [0 2]}
-           {:word "DAY", :identity :red, :revealed? false, :position [4 2]}
-           {:word "TRUNK", :identity :red, :revealed? false, :position [1 4]}
-           {:word "PAN", :identity :blue, :revealed? true, :position [2 1]}
-           {:word "MILLIONAIRE", :identity :blue, :revealed? true, :position [2 3]}
-           {:word "BALL", :identity :blue, :revealed? true, :position [1 2]}
-           {:word "KING", :identity :blue, :revealed? true, :position [4 4]}
-           {:word "MOUNT", :identity :blue, :revealed? true, :position [3 3]}
-           {:word "LIMOUSINE", :identity :blue, :revealed? true, :position [3 2]}
-           {:word "OCTOPUS", :identity :blue, :revealed? true, :position [0 0]}
-           {:word "SPINE", :identity :blue, :revealed? false, :position [2 4]} ;; !!
-           {:word "STADIUM", :identity :neutral, :revealed? false, :position [3 1]}
-           {:word "CRASH", :identity :neutral, :revealed? false, :position [1 1]}
-           {:word "PIRATE", :identity :neutral, :revealed? false, :position [0 3]}
-           {:word "GLASS", :identity :neutral, :revealed? false, :position [1 0]}
-           {:word "SWING", :identity :neutral, :revealed? false, :position [3 4]}
-           {:word "KIWI", :identity :neutral, :revealed? false, :position [4 1]}
-           {:word "SHAKESPEARE", :identity :neutral, :revealed? false, :position [4 3]}
-           {:word "LONDON", :identity :assassin, :revealed? false, :position [0 4]}),
-         :red-remaining 9,
-         :round 0,
-         :id "G__47791",
-         :winning-team nil}))
+(def one-blue-remaining-start-value
+  {:starting-team :red,
+   :blue-remaining 1,
+   :current-team :red,
+   :words
+   '({:word "POST", :identity :red, :revealed? false, :position [2 0]}
+     {:word "POISON", :identity :red, :revealed? false, :position [3 0]}
+     {:word "PISTOL", :identity :red, :revealed? false, :position [2 2]}
+     {:word "INDIA", :identity :red, :revealed? false, :position [0 1]}
+     {:word "POLICE", :identity :red, :revealed? false, :position [1 3]}
+     {:word "LINK", :identity :red, :revealed? false, :position [4 0]}
+     {:word "SPY", :identity :red, :revealed? false, :position [0 2]}
+     {:word "DAY", :identity :red, :revealed? false, :position [4 2]}
+     {:word "TRUNK", :identity :red, :revealed? false, :position [1 4]}
+     {:word "PAN", :identity :blue, :revealed? true, :position [2 1]}
+     {:word "MILLIONAIRE", :identity :blue, :revealed? true, :position [2 3]}
+     {:word "BALL", :identity :blue, :revealed? true, :position [1 2]}
+     {:word "KING", :identity :blue, :revealed? true, :position [4 4]}
+     {:word "MOUNT", :identity :blue, :revealed? true, :position [3 3]}
+     {:word "LIMOUSINE", :identity :blue, :revealed? true, :position [3 2]}
+     {:word "OCTOPUS", :identity :blue, :revealed? true, :position [0 0]}
+     {:word "SPINE", :identity :blue, :revealed? false, :position [2 4]} ;; !!
+     {:word "STADIUM", :identity :neutral, :revealed? false, :position [3 1]}
+     {:word "CRASH", :identity :neutral, :revealed? false, :position [1 1]}
+     {:word "PIRATE", :identity :neutral, :revealed? false, :position [0 3]}
+     {:word "GLASS", :identity :neutral, :revealed? false, :position [1 0]}
+     {:word "SWING", :identity :neutral, :revealed? false, :position [3 4]}
+     {:word "KIWI", :identity :neutral, :revealed? false, :position [4 1]}
+     {:word "SHAKESPEARE", :identity :neutral, :revealed? false, :position [4 3]}
+     {:word "LONDON", :identity :assassin, :revealed? false, :position [0 4]}),
+   :red-remaining 9,
+   :round 0,
+   :id "G__47791",
+   :winning-team nil})
 
-(def one-red-remaining
-  (atom {:starting-team :blue,
-         :blue-remaining 9,
-         :current-team :red,
-         :words
-         '({:word "WAVE", :identity :blue, :revealed? false, :position [0 1]}
-           {:word "WEB", :identity :blue, :revealed? false, :position [1 4]}
-           {:word "RABBIT", :identity :blue, :revealed? false, :position [3 2]}
-           {:word "CAPITAL", :identity :blue, :revealed? false, :position [0 3]}
-           {:word "SEAL", :identity :blue, :revealed? false, :position [0 0]}
-           {:word "STAR", :identity :blue, :revealed? false, :position [1 2]}
-           {:word "SOLDIER", :identity :blue, :revealed? false, :position [4 0]}
-           {:word "ROME", :identity :blue, :revealed? false, :position [2 3]}
-           {:word "DEATH", :identity :blue, :revealed? false, :position [2 2]}
-           {:word "BERLIN", :identity :red, :revealed? true, :position [3 1]}
-           {:word "LOCK", :identity :red, :revealed? true, :position [2 4]}
-           {:word "AMBULANCE", :identity :red, :revealed? true, :position [4 2]}
-           {:word "BAR", :identity :red, :revealed? true, :position [3 0]}
-           {:word "LIMOUSINE", :identity :red, :revealed? true, :position [4 3]}
-           {:word "FISH", :identity :red, :revealed? true, :position [1 1]}
-           {:word "NEEDLE", :identity :red, :revealed? true, :position [4 1]}
-           {:word "STRIKE", :identity :red, :revealed? false, :position [4 4]} ;; !!
-           {:word "SPRING", :identity :neutral, :revealed? false, :position [2 0]}
-           {:word "THIEF", :identity :neutral, :revealed? false, :position [1 3]}
-           {:word "HOSPITAL", :identity :neutral, :revealed? false, :position [0 2]}
-           {:word "EAGLE", :identity :neutral, :revealed? false, :position [3 4]}
-           {:word "BOARD", :identity :neutral, :revealed? false, :position [3 3]}
-           {:word "TEMPLE", :identity :neutral, :revealed? false, :position [2 1]}
-           {:word "PLOT", :identity :neutral, :revealed? false, :position [0 4]}
-           {:word "HAWK", :identity :assassin, :revealed? false, :position [1 0]}),
-         :red-remaining 1,
-         :round 0,
-         :id "G__47795",
-         :winning-team nil}))
+(def one-blue-remaining (atom one-blue-remaining-start-value))
+
+(def one-red-remaining-start-value
+  {:starting-team :blue,
+   :blue-remaining 9,
+   :current-team :red,
+   :words
+   '({:word "WAVE", :identity :blue, :revealed? false, :position [0 1]}
+     {:word "WEB", :identity :blue, :revealed? false, :position [1 4]}
+     {:word "RABBIT", :identity :blue, :revealed? false, :position [3 2]}
+     {:word "CAPITAL", :identity :blue, :revealed? false, :position [0 3]}
+     {:word "SEAL", :identity :blue, :revealed? false, :position [0 0]}
+     {:word "STAR", :identity :blue, :revealed? false, :position [1 2]}
+     {:word "SOLDIER", :identity :blue, :revealed? false, :position [4 0]}
+     {:word "ROME", :identity :blue, :revealed? false, :position [2 3]}
+     {:word "DEATH", :identity :blue, :revealed? false, :position [2 2]}
+     {:word "BERLIN", :identity :red, :revealed? true, :position [3 1]}
+     {:word "LOCK", :identity :red, :revealed? true, :position [2 4]}
+     {:word "AMBULANCE", :identity :red, :revealed? true, :position [4 2]}
+     {:word "BAR", :identity :red, :revealed? true, :position [3 0]}
+     {:word "LIMOUSINE", :identity :red, :revealed? true, :position [4 3]}
+     {:word "FISH", :identity :red, :revealed? true, :position [1 1]}
+     {:word "NEEDLE", :identity :red, :revealed? true, :position [4 1]}
+     {:word "STRIKE", :identity :red, :revealed? false, :position [4 4]} ;; !!
+     {:word "SPRING", :identity :neutral, :revealed? false, :position [2 0]}
+     {:word "THIEF", :identity :neutral, :revealed? false, :position [1 3]}
+     {:word "HOSPITAL", :identity :neutral, :revealed? false, :position [0 2]}
+     {:word "EAGLE", :identity :neutral, :revealed? false, :position [3 4]}
+     {:word "BOARD", :identity :neutral, :revealed? false, :position [3 3]}
+     {:word "TEMPLE", :identity :neutral, :revealed? false, :position [2 1]}
+     {:word "PLOT", :identity :neutral, :revealed? false, :position [0 4]}
+     {:word "HAWK", :identity :assassin, :revealed? false, :position [1 0]}),
+   :red-remaining 1,
+   :round 0,
+   :id "G__47795",
+   :winning-team nil})
+
+(def one-red-remaining (atom one-red-remaining-start-value))
 
 (deftest move-can-make-you-win-or-lose
   (testing "if there are no blue-remaining after your move, blue wins! (if you're blue, you win. if you're red, you lose.)"
@@ -359,7 +363,8 @@
           _                 (m/move! one-blue-remaining "SPINE")
           new-remaining     (m/get-remaining one-blue-remaining)
           new-winner        (m/winner? one-blue-remaining)
-          winner            (m/get-winner one-blue-remaining)]
+          winner            (m/get-winner one-blue-remaining)
+          _                 (reset! one-blue-remaining one-blue-remaining-start-value)]
       (is (= (:blue-remaining initial-remaining)
              1))
       (is (false? initial-winner))
@@ -377,7 +382,8 @@
           _                 (m/move! one-red-remaining "STRIKE")
           new-remaining     (m/get-remaining one-red-remaining)
           new-winner        (m/winner? one-red-remaining)
-          winner            (m/get-winner one-red-remaining)]
+          winner            (m/get-winner one-red-remaining)
+          _                 (reset! one-red-remaining one-red-remaining-start-value)]
       (is (= (:red-remaining initial-remaining)
              1))
       (is (false? initial-winner))
