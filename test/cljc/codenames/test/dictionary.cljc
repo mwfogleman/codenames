@@ -1,4 +1,4 @@
-(ns cljc.codenames.test.dictionary
+(ns codenames.test.dictionary
   #?(:clj
      (:require [codenames.dictionary :as dict :refer [dictionary]]
                [codenames.util :refer [in?]]

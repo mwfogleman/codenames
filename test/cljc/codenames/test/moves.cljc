@@ -1,4 +1,4 @@
-(ns cljc.codenames.test.moves
+(ns codenames.test.moves
   #?(:clj
      (:require [com.rpl.specter :as S]
                [codenames.game :as game]

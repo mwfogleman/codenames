@@ -1,4 +1,4 @@
-(ns cljc.codenames.test.game
+(ns codenames.test.game
   #?(:clj
      (:require [codenames.game :as game]
                [codenames.moves :as m]
