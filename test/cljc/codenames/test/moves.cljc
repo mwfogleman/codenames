@@ -36,7 +36,7 @@
 (use-fixtures :each each-fixture)
 
 (deftest we-can-check-if-words-are-valid
-  (let [a-word (-> @a-game :words first :word)]
+  (let [a-word (-> @a-game :words rand-nth :word)]
     (is (m/valid-word? a-game a-word))))
 
 (deftest opposite-teams
@@ -153,7 +153,7 @@
       (is (true? (m/winner? a-game))))))
 
 (deftest get-cell-returns-a-particular-word-by-position
-  (let [a-word (-> @a-game :words first)
+  (let [a-word (-> @a-game :words rand-nth)
         word-pos (:position a-word)
         [pos-1 pos-2] ((juxt first second) word-pos)
         returned-cell (m/get-cell a-game pos-1 pos-2)]
@@ -209,11 +209,11 @@
   (testing "assertions are thrown for invalid words, such as SCREWDRIVER" 
     (is (thrown? AssertionError (m/move! a-game "SCREWDRIVER"))))
   (testing "assertions are thrown for revealed words"
-    (let [a-word (-> @a-game :words first :word)
+    (let [a-word (-> @a-game :words rand-nth :word)
           _      (m/reveal! a-game a-word)]
       (is (thrown? AssertionError (m/move! a-game a-word)))))
   (testing "assertions are thrown if there is already a winner"
-    (let [a-word (-> @a-game :words first :word)
+    (let [a-word (-> @a-game :words rand-nth :word)
           _      (m/win! a-game)]
       (is (thrown? AssertionError (m/move! a-game a-word))))))
 
