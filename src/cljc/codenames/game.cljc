@@ -43,8 +43,3 @@
          (map mapper)
          (hash-map :words)
          (merge metadata))))
-
-(defn new-game! [game]
-  (reset! game (prepare-game)))
-
-

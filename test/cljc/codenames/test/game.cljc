@@ -16,23 +16,23 @@
   (= (set game/teams)
      #{:red :blue}))
 
-(def a-game (atom (game/prepare-game)))
+(def a-game (game/prepare-game))
 
 (deftest game-is-a-map
-  (is (map? @a-game)))
+  (is (map? a-game)))
 
 (deftest starting-team-is-current-team
-  (let [{:keys [starting-team current-team]} @a-game]
+  (let [{:keys [starting-team current-team]} a-game]
     (is (= starting-team current-team))))
 
 (deftest starting-team-is-red-or-blue
-  (is (in? game/teams (:starting-team @a-game))))
+  (is (in? game/teams (:starting-team a-game))))
 
 (deftest current-team-is-red-or-blue
-  (is (in? game/teams (:current-team @a-game))))
+  (is (in? game/teams (:current-team a-game))))
 
 (deftest red-and-blue-start-with-nine-or-eight
-  (let [{:keys [remaining starting-team]} @a-game
+  (let [{:keys [remaining starting-team]} a-game
         {:keys [red blue]} remaining]
     (is (if (= starting-team :blue)
           (and (= blue 9)
@@ -41,18 +41,18 @@
                (= blue 8))))))
 
 (deftest starting-round-is-zero
-  (is (= (:round @a-game) 0)))
+  (is (= (:round a-game) 0)))
 
 (deftest no-one-has-won
-  (is (nil? (:winning-team @a-game))))
+  (is (nil? (:winning-team a-game))))
 
 (deftest id-is-a-gensym-string
-  (let [{:keys [id]} @a-game]
+  (let [{:keys [id]} a-game]
     (is (string? id))
     (is (some? (re-seq #"\w*\_*\d+" id)))))
 
 (deftest words-tests
-  (let [all-words                                  (-> @a-game :words)
+  (let [all-words                                  (:words a-game)
         a-word-map                                 (rand-nth all-words)
         {:keys [word identity revealed? position]} a-word-map]
     (testing "There are 25 words"
@@ -98,10 +98,3 @@
     (is (or (= hidden-red 8) (= hidden-red 9)))
     (is (= hidden-civilians 7))
     (is (= hidden-assassins 1))))
-
-(deftest we-can-reset-games
-  (let [get-words     (fn [g] (S/select [S/ATOM :words S/ALL :word] g))
-        initial-words (get-words a-game)
-        _             (game/new-game! a-game)
-        new-words     (get-words a-game)]
-    (is (not= initial-words new-words))))
