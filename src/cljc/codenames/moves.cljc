@@ -98,15 +98,15 @@
 
 (defn get-remaining
   [game]
-  (S/select-any [S/ATOM (S/submap [:blue-remaining :red-remaining])] game))
+  (S/select-any [S/ATOM :remaining] game))
 
 (defn update-remaining!
   [game]
   (let [frqs           (get-freqs game)
         blue-remaining (get frqs [:blue false] 0)
         red-remaining  (get frqs [:red false] 0)]
-    (S/setval [S/ATOM :blue-remaining] blue-remaining game)
-    (S/setval [S/ATOM :red-remaining]  red-remaining game)))
+    (S/setval [S/ATOM :remaining :blue] blue-remaining game)
+    (S/setval [S/ATOM :remaining :red] red-remaining game)))
 
 (defn move! [game word]
   {:pre [(valid-word? game word)
@@ -114,12 +114,12 @@
          (= false (winner? game))]}
   (reveal! game word)
   (update-remaining! game)
-  (let [current-team                           (get-current-team game)
-        id                                     (get-id-of-word game word)
-        match-result                           (= id current-team) ;; Register whether they picked someone on their team, or on the other team.
-        {:keys [blue-remaining red-remaining]} (get-remaining game)]
+  (let [current-team       (get-current-team game)
+        id                 (get-id-of-word game word)
+        match-result       (= id current-team) ;; Register whether they picked someone on their team, or on the other team.
+        {:keys [blue red]} (get-remaining game)]
     (cond (= id :assassin) (lose! game)
-          (and (> blue-remaining 0) (> red-remaining 0)) ;; Check if there are remaining hidden cards for either team.
+          (and (> blue 0) (> red 0)) ;; Check if there are remaining hidden cards for either team.
           ;; If they picked someone on their team, they can keep moving
           ;; If they picked someone from the other team, switch to make it the other team's turn.
           (if (true? match-result)

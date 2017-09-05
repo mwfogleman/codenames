@@ -173,7 +173,7 @@
         ks        (set (keys remaining))
         vs        (set (vals remaining))]
     (is (= ks
-           #{:blue-remaining :red-remaining}))
+           #{:red :blue}))
     (is (= vs
            #{8 9}))))
 
@@ -182,20 +182,20 @@
 
 (deftest update-remaining-works
   (let [initial-remaining     (m/get-remaining a-game)
-        initial-red-remaining (:red-remaining initial-remaining)
+        initial-red-remaining (:red initial-remaining)
         initial-hidden-total  (->> initial-remaining vals (apply +))
         ;; reveal a red, rather than a neutral or the assassin. blue would do just as well.
         a-red                 (get-a-red a-game)
         _                     (m/reveal! a-game a-red)
         _                     (m/update-remaining! a-game)
         new-remaining         (m/get-remaining a-game)
-        new-red-remaining     (:red-remaining new-remaining)
+        new-red-remaining     (:red new-remaining)
         new-hidden-total      (->> new-remaining vals (apply +))]
-    (testing "all cards are hidden to start, but there are 9 on one team (e.g., :blue-remaining) and 8 on the
-    other (e.g., :red-remaining), for a total of 17"
+    (testing "all cards are hidden to start, but there are 9 on one team (e.g., :blue) and 8 on the
+    other (e.g., :red), for a total of 17"
       (is (= initial-hidden-total
              17)))
-    (testing "if we reveal a word, the keys for :blue-remaining and :red-remaining will be different"
+    (testing "if we reveal a word, the keys for :blue and :red will be different"
       (is (not= initial-remaining new-remaining))
       (is (> initial-red-remaining new-red-remaining))
       (is (= initial-red-remaining (inc new-red-remaining))))
@@ -232,8 +232,8 @@
         _                 (m/move! a-game a-red)
         new-remaining     (m/get-remaining a-game)]
     (is (not= initial-remaining new-remaining))
-    (is (= (:red-remaining initial-remaining)
-           (inc (:red-remaining new-remaining))))))
+    (is (= (:red initial-remaining)
+           (inc (:red new-remaining))))))
 
 (deftest picking-the-assassin-makes-you-lose
   (let [initial-winner (m/get-winner a-game)
@@ -283,7 +283,7 @@
 
 (def one-blue-remaining-start-value
   {:starting-team :red,
-   :blue-remaining 1,
+   :remaining {:blue 1 :red 9}
    :current-team :red,
    :words
    '({:word "POST", :identity :red, :revealed? false, :position [2 0]}
@@ -311,7 +311,6 @@
      {:word "KIWI", :identity :neutral, :revealed? false, :position [4 1]}
      {:word "SHAKESPEARE", :identity :neutral, :revealed? false, :position [4 3]}
      {:word "LONDON", :identity :assassin, :revealed? false, :position [0 4]}),
-   :red-remaining 9,
    :round 0,
    :id "G__47791",
    :winning-team nil})
@@ -320,7 +319,7 @@
 
 (def one-red-remaining-start-value
   {:starting-team :blue,
-   :blue-remaining 9,
+   :remaining {:blue 9 :red 1}
    :current-team :red,
    :words
    '({:word "WAVE", :identity :blue, :revealed? false, :position [0 1]}
@@ -348,7 +347,6 @@
      {:word "TEMPLE", :identity :neutral, :revealed? false, :position [2 1]}
      {:word "PLOT", :identity :neutral, :revealed? false, :position [0 4]}
      {:word "HAWK", :identity :assassin, :revealed? false, :position [1 0]}),
-   :red-remaining 1,
    :round 0,
    :id "G__47795",
    :winning-team nil})
@@ -365,13 +363,11 @@
           new-winner        (m/winner? one-blue-remaining)
           winner            (m/get-winner one-blue-remaining)
           _                 (reset! one-blue-remaining one-blue-remaining-start-value)]
-      (is (= (:blue-remaining initial-remaining)
-             1))
+      (is (= (:blue initial-remaining) 1))
       (is (false? initial-winner))
       (is (= current-team :red))
       (is (true? new-winner))
-      (is (= (:blue-remaining new-remaining)
-             0))
+      (is (= (:blue new-remaining) 0))
       (is (not= current-team winner))
       (is (= winner :blue))))
 
@@ -384,12 +380,10 @@
           new-winner        (m/winner? one-red-remaining)
           winner            (m/get-winner one-red-remaining)
           _                 (reset! one-red-remaining one-red-remaining-start-value)]
-      (is (= (:red-remaining initial-remaining)
-             1))
+      (is (= (:red initial-remaining) 1))
       (is (false? initial-winner))
       (is (= current-team :red))
       (is (true? new-winner))
-      (is (= (:red-remaining new-remaining)
-             0))
+      (is (= (:red new-remaining) 0))
       (is (= current-team winner))
       (is (= winner :red)))))

@@ -32,12 +32,13 @@
   (is (in? game/teams (:current-team @a-game))))
 
 (deftest red-and-blue-start-with-nine-or-eight
-  (let [{:keys [blue-remaining red-remaining starting-team]} @a-game]
+  (let [{:keys [remaining starting-team]} @a-game
+        {:keys [red blue]} remaining]
     (is (if (= starting-team :blue)
-          (and (= blue-remaining 9)
-               (= red-remaining 8))
-          (and (= red-remaining 9)
-               (= blue-remaining 8))))))
+          (and (= blue 9)
+               (= red 8))
+          (and (= red 9)
+               (= blue 8))))))
 
 (deftest starting-round-is-zero
   (is (= (:round @a-game) 0)))

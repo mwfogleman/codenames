@@ -7,10 +7,10 @@
   "In each game, there should be: 1 :assassin, 9 of the starting team (e.g., :red), 8 of the next team (e.g., :blue), and 7 civilians (:neutral). Return a sequence with those amounts of the keywords, as well as a map that says who the starting team is."
   []
   (let [[fst snd] (shuffle teams)
-        keywordizer (fn [team] (-> team (name) (str "-remaining") (keyword)))
-        remaining-map (hash-map (keywordizer fst) 9 (keywordizer snd) 8)
-        m (merge remaining-map {:starting-team fst
-                                :current-team fst})]
+        remaining-map (hash-map fst 9 snd 8)
+        m {:starting-team fst
+           :current-team fst
+           :remaining remaining-map}]
     (cons m (reduce concat [(repeat 9 fst)
                             (repeat 8 snd)
                             (repeat 7 :neutral)
