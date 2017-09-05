@@ -177,9 +177,6 @@
     (is (= vs
            #{8 9}))))
 
-(defn get-a-red [game]
-  (S/select-any [S/ATOM :words S/ALL (S/if-path [:identity (S/pred= :red)] :word)] game))
-
 (deftest update-remaining-works
   (let [initial-remaining     (m/get-remaining a-game)
         initial-red-remaining (:red initial-remaining)
