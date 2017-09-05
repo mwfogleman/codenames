@@ -53,7 +53,7 @@
 
 (deftest words-tests
   (let [all-words                                  (-> @a-game :words)
-        a-word-map                                 (first all-words)
+        a-word-map                                 (rand-nth all-words)
         {:keys [word identity revealed? position]} a-word-map]
     (testing "There are 25 words"
       (is (= (count all-words) 25)))
