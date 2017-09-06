@@ -30,9 +30,7 @@
 (defn next-round! [game]
   (S/transform [:round] inc game))
 
-(defn get-current-team
-  [game]
-  (S/select-any [:current-team] game))
+(def get-current-team :current-team)
 
 (defn opposite-team [team]
   {:pre [(keyword? team)
@@ -81,8 +79,6 @@
 (defn get-cell
   [game x y]
   (S/select-any [:words (S/filterer #(cell-filterer [x y] %)) S/ALL] game))
-
-(def get-current-team :current-team)
 
 (defn get-revealed-status
   [game x y]
