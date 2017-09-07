@@ -26,8 +26,7 @@
         (if (true? revealed?)
           [:span.word
            [colorize word identity]]
-          [:button.unrevealed {:on-click #(->> (m/move! g word)
-                                               (reset! game))}
+          [:button.unrevealed {:on-click #(swap! game m/move! word)}
            word])))))
 
 (defn grid [game]
@@ -42,8 +41,7 @@
   (fn []
     (let [g @game
           turn   (m/get-current-team g)]
-      [:button {:on-click #(->> (m/next-turn! g)
-                                (reset! game))}
+      [:button {:on-click #(swap! game m/next-turn!)}
        "End " (name turn) "'s turn."])))
 
 (defn reset-button [game]
