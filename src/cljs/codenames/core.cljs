@@ -1,9 +1,10 @@
 (ns codenames.core
-  (:require [codenames.game :as g]
+  (:require [accountant.core :as accountant]
+            [clojure.string :as str]
+            [codenames.game :as g]
             [codenames.moves :as m]
             [reagent.core :as reagent :refer [atom]]
-            [secretary.core :as secretary :include-macros true]
-            [accountant.core :as accountant]))
+            [secretary.core :as secretary :include-macros true]))
 
 ;; -------------------------
 ;; Views
@@ -78,7 +79,7 @@
          [:div
           [reset-button game]
           [:div
-           (clojure.string/capitalize (name winner)) " is the winner."]]
+           (str/capitalize (name winner)) " is the winner."]]
          [:div
           [:div "It's " (name turn) "'s turn."]
           [view-toggle game]
@@ -102,7 +103,7 @@
 ;; -------------------------
 ;; Routes
 
-(def page (reagent/atom #'game-page))
+(def page (atom #'game-page))
 
 (defn current-page []
   [:div [@page]])
