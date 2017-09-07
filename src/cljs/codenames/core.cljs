@@ -38,6 +38,14 @@
         [:td.cell
          [cell game x y]])])])
 
+(defn change-turn-button [game]
+  (fn []
+    (let [g @game
+          turn   (m/get-current-team g)]
+      [:button {:on-click #(->> (m/next-turn! g)
+                                (reset! game))}
+       "End " (name turn) "'s turn."])))
+
 (defn reset-button [game]
   (fn []
     (let [g @game]
@@ -64,6 +72,7 @@
          [:div
           [:div "It's " (name turn) "'s turn."]
           [remaining-display game]
+          [change-turn-button game]
           [reset-button game]])
        [:center
         [:p
