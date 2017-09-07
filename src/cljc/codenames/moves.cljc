@@ -14,6 +14,12 @@
 
 (def hidden? (complement revealed?))
 
+(defn switch-view! [game]
+  (let [view (:view game)]
+    (if (= view :player)
+      (assoc game :view :spymaster)
+      (assoc game :view :player))))
+
 (defn get-freqs [game]
   "Checks how many people are on which team, and how many people are revealed in a game. Running get-freqs on an initial game state should return something like the following:
 {[:blue false] 9, [:red false] 8, [:neutral false] 7, [:assassin false] 1}"

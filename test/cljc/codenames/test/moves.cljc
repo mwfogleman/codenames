@@ -40,6 +40,19 @@
 (def get-a-blue (get-a-word-of-identity :blue))
 (def get-a-neutral (get-a-word-of-identity :neutral))
 
+(deftest we-can-switch-the-view
+  (let [v   (:view a-game)
+        g   (m/switch-view! a-game)
+        v'  (:view g)
+        g'  (m/switch-view! g)
+        v'' (:view g')]
+    (testing "we start with player-view"
+      (is (= v :player)))
+    (testing "but that can change for spymasters!"
+      (is (= v' :spymaster)))
+    (testing "or, back to player view!"
+      (is (= v'' :player)))))
+
 (deftest words-can-be-hidden-or-revealed
   (let [assassin-word (get-the-assassin a-game)
         g             (m/reveal! a-game assassin-word)]

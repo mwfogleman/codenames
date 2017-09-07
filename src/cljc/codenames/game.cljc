@@ -29,7 +29,8 @@
         metadata-init {:winning-team nil
                        :id (str (gensym))
                        ;; :created-at (t/now)
-                       :round 0}
+                       :round 0
+                       :view :player}
         metadata (merge alliance-map metadata-init)
         coords (shuffle (for [x (range 5) y (range 5)] (vector x y)))
         mapper (fn [[id coord wd]] {:word wd

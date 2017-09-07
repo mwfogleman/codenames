@@ -8,34 +8,11 @@
 ;; -------------------------
 ;; Views
 
-(defn colorize [word identity]
-  (case identity
-    :blue     [:div.blue word]
-    :red      [:div.red word]
-    :assassin [:div.assassin word]
-    :neutral  [:div.neutral word]))
-
-(defn cell [game x y]
+(defn view-toggle [game]
   (fn []
-    (let [g                                 @game
-          {:keys [word identity revealed?]} (m/get-cell g x y)
-          winner                            (m/get-winner g)]
-      (if winner
-        [:span.word
-         [colorize word identity]]
-        (if (true? revealed?)
-          [:span.word
-           [colorize word identity]]
-          [:button.unrevealed {:on-click #(swap! game m/move! word)}
-           word])))))
-
-(defn grid [game]
-  [:table
-   (for [y (range 5)]
-     [:tr
-      (for [x (range 5)]
-        [:td.cell
-         [cell game x y]])])])
+    (let [g @game]
+      [:button {:on-click #(swap! game m/switch-view!)}
+       "Toggle view."])))
 
 (defn change-turn-button [game]
   (fn []
@@ -58,6 +35,39 @@
       [:div.remaining
        [:span.red red] " - " [:span.blue blue]])))
 
+(defn colorize [word identity]
+  (case identity
+    :blue     [:div.blue word]
+    :red      [:div.red word]
+    :assassin [:div.assassin word]
+    :neutral  [:div.neutral word]))
+
+(defn cell [game x y]
+  (fn []
+    (let [g                                 @game
+          v                                 (:view g)
+          {:keys [word identity revealed?]} (m/get-cell g x y)
+          winner                            (m/get-winner g)]
+      (if (= v :player)
+        (if winner
+          [:span.word
+           [colorize word identity]]
+          (if (true? revealed?)
+            [:span.word
+             [colorize word identity]]
+            [:button.unrevealed {:on-click #(swap! game m/move! word)}
+             word]))
+        [:span.word
+         [colorize word identity]]))))
+
+(defn grid [game]
+  [:table
+   (for [y (range 5)]
+     [:tr
+      (for [x (range 5)]
+        [:td.cell
+         [cell game x y]])])])
+
 (defn main-panel [game]
   (fn []
     (let [g      @game
@@ -69,6 +79,7 @@
           (clojure.string/capitalize (name winner)) " is the winner."]
          [:div
           [:div "It's " (name turn) "'s turn."]
+          [view-toggle game]
           [remaining-display game]
           [change-turn-button game]
           [reset-button game]])
