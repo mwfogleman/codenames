@@ -10,14 +10,10 @@
 
 (defn colorize [word identity]
   (case identity
-    :blue     [:div {:style {:color "blue"}}
-               word]
-    :red      [:div {:style {:color "red"}}
-               word]
-    :assassin [:div {:style {:color "grey"}}
-               word]
-    :neutral  [:div {:style {:color "yellow"}}
-               word]))
+    :blue     [:div.blue word]
+    :red      [:div.red word]
+    :assassin [:div.assassin word]
+    :neutral  [:div.neutral word]))
 
 (defn cell [game x y]
   (fn []
@@ -25,27 +21,21 @@
           {:keys [word identity revealed?]} (m/get-cell g x y)
           winner                            (m/get-winner g)]
       (if winner
-        [:span
+        [:span.word
          [colorize word identity]]
         (if (true? revealed?)
-          [:span {:style {:width 30
-                          :height 30}}
+          [:span.word
            [colorize word identity]]
-          [:button {:on-click #(->> (m/move! g word)
-                                    (reset! game))
-                    :style {:width 100
-                            :height 100}}
-           [:div {:style {:color "black"}}
-            word]])))))
+          [:button.unrevealed {:on-click #(->> (m/move! g word)
+                                               (reset! game))}
+           word])))))
 
 (defn grid [game]
   [:table
    (for [y (range 5)]
      [:tr
       (for [x (range 5)]
-        [:td {:style {:width      100
-                      :height     100
-                      :text-align :center}}
+        [:td.cell
          [cell game x y]])])])
 
 (defn main-panel [game]
