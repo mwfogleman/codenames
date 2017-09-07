@@ -76,7 +76,9 @@
       [:div
        (if winner
          [:div
-          (clojure.string/capitalize (name winner)) " is the winner."]
+          [reset-button game]
+          [:div
+           (clojure.string/capitalize (name winner)) " is the winner."]]
          [:div
           [:div "It's " (name turn) "'s turn."]
           [view-toggle game]
