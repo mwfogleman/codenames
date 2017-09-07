@@ -33,6 +33,18 @@ a:hover {
     text-decoration: underline;
 }
 
+div.remaining {
+    text-align: center;
+}
+
+span.red {
+    color: #ff0000;
+}
+
+span.blue {
+    color: #0e2df4;
+}
+
 div.blue {
     color: #0e2df4;
 }

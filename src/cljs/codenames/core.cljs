@@ -38,6 +38,20 @@
         [:td.cell
          [cell game x y]])])])
 
+(defn reset-button [game]
+  (fn []
+    (let [g @game]
+      [:button {:on-click #(reset! game (g/prepare-game))}
+       "Start a new game!"])))
+
+(defn remaining-display [game]
+  (fn []
+    (let [g    @game
+          red  (-> g :remaining :red)
+          blue (-> g :remaining :blue)]
+      [:div.remaining
+       [:span.red red] " - " [:span.blue blue]])))
+
 (defn main-panel [game]
   (fn []
     (let [g      @game
@@ -48,12 +62,12 @@
          [:div
           (clojure.string/capitalize (name winner)) " is the winner."]
          [:div
-          "It's " (name turn) "'s turn."])
+          [:div "It's " (name turn) "'s turn."]
+          [remaining-display game]
+          [reset-button game]])
        [:center
         [:p
-         [grid game]]]
-       [:p
-        g]])))
+         [grid game]]]])))
 
 (defn home-page []
   [:div [:h2 "Welcome to Codenames"]
