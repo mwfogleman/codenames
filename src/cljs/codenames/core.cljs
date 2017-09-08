@@ -60,6 +60,14 @@
       [:button {:on-click #(reset! game (g/prepare-game))}
        "Start a new game!"])))
 
+(defn gameplay-bar [game view]
+  (fn []
+    (let [g @game
+          v @view]
+      [:div
+       [view-toggle view]
+       [reset-button game]])))
+
 (defn colorize [word identity]
   (case identity
     :blue     [:div.blue word]
@@ -100,14 +108,13 @@
           winner (q/get-winner g)]
       [:div
        [game-status-bar game]
-       (if winner [:div [reset-button game]]
-           [:div
-            [view-toggle view]
-            [turn-status-bar game view]
-            [reset-button game]])
+       (if winner
+         [reset-button game]
+         [turn-status-bar game view])
        [:center
         [:p
-         [grid game view]]]])))
+         [grid game view]
+         [gameplay-bar game view]]]])))
 
 (defn home-page []
   [:div [:h2 "Welcome to Codenames"]
