@@ -19,8 +19,8 @@
         winner (q/get-winner g)]
     [:div
      (if winner
-       [:div (->> winner name str/capitalize) " is the winner."]
-       [:div "It's " (name turn) "'s turn."])]))
+       [:div "The " (name winner) " team wins!"]
+       [:div "It's the " (name turn) " team's turn."])]))
 
 (defn remaining [game]
   (fn []
@@ -35,7 +35,7 @@
     (let [g @game
           turn   (q/get-current-team g)]
       [:button {:on-click #(swap! game m/next-turn!)}
-       "End " (name turn) "'s turn."])))
+       "End the " (name turn) " team's turn."])))
 
 (defn turn-status-bar [game view]
   (fn []
@@ -52,13 +52,15 @@
   (fn []
     (let [v @view]
       [:button {:on-click #(swap! view m/switch-view!)}
-       "Toggle view."])))
+       (if (= v :player)
+         "Spymaster"
+         "Player")])))
 
 (defn reset-button [game]
   (fn []
     (let [g @game]
       [:button {:on-click #(reset! game (g/prepare-game))}
-       "Start a new game!"])))
+       "Next Game"])))
 
 (defn gameplay-bar [game view]
   (fn []
@@ -82,15 +84,10 @@
           {:keys [word identity revealed?]} (q/get-cell g x y)
           winner                            (q/get-winner g)
           w                                 [:span.word [colorize word identity]]]
-      (if (= v :player)
-        (if winner
-          w
-          (if (true? revealed?)
-            w
-            [:button.unrevealed {:on-click #(swap! game m/move! word)}
-             word]))
-        [:span.word
-         w]))))
+      (if (or (= v :spymaster) winner (true? revealed?))
+        w
+        [:button.unrevealed {:on-click #(swap! game m/move! word)}
+         word]))))
 
 (defn grid [game view]
   [:table
@@ -125,6 +122,7 @@
     (let [game (atom (g/prepare-game))
           view (atom :player)]
       [:div [title-bar]
+       [:hr]
        [main-panel game view]])))
 
 ;; -------------------------
