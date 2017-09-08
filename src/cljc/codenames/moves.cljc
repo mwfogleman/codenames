@@ -2,11 +2,10 @@
   (:require [codenames.queries :as q]
             [com.rpl.specter :as S]))
 
-(defn switch-view! [game]
-  (let [view (:view game)]
-    (if (= view :player)
-      (assoc game :view :spymaster)
-      (assoc game :view :player))))
+(defn switch-view! [view]
+  (if (= view :player)
+    :spymaster
+    :player))
 
 (defn reveal! [game word]
   (S/setval [:words (S/filterer #(q/word-filterer word %)) S/ALL :revealed?]

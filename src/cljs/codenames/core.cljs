@@ -10,6 +10,9 @@
 ;; -------------------------
 ;; Views
 
+(defn title-bar []
+  [:div [:h2 "Codenames"]])
+
 (defn status-bar [game]
   (let [g      @game
         turn   (q/get-current-team g)
@@ -19,10 +22,10 @@
        [:div (->> winner name str/capitalize) " is the winner."]
        [:div "It's " (name turn) "'s turn."])]))
 
-(defn view-toggle [game]
+(defn view-toggle [view]
   (fn []
-    (let [g @game]
-      [:button {:on-click #(swap! game m/switch-view!)}
+    (let [v @view]
+      [:button {:on-click #(swap! view m/switch-view!)}
        "Toggle view."])))
 
 (defn change-turn-button [game]
@@ -53,13 +56,13 @@
     :assassin [:div.assassin word]
     :neutral  [:div.neutral word]))
 
-(defn cell [game x y]
+(defn cell [game view x y]
   (fn []
     (let [g                                 @game
-          v                                 (:view g)
+          v                                 @view
           {:keys [word identity revealed?]} (q/get-cell g x y)
           winner                            (q/get-winner g)
-          w [:span.word [colorize word identity]]]
+          w                                 [:span.word [colorize word identity]]]
       (if (= v :player)
         (if winner
           w
@@ -70,30 +73,31 @@
         [:span.word
          w]))))
 
-(defn grid [game]
+(defn grid [game view]
   [:table
    (for [y (range 5)]
      [:tr
       (for [x (range 5)]
         [:td.cell
-         [cell game x y]])])])
+         [cell game view x y]])])])
 
-(defn main-panel [game]
+(defn main-panel [game view]
   (fn []
     (let [g      @game
+          v      @view
           turn   (q/get-current-team g)
           winner (q/get-winner g)]
       [:div
        [status-bar game]
        (if winner [:div [reset-button game]]
            [:div
-            [view-toggle game]
+            [view-toggle view]
             [remaining-display game]
             [change-turn-button game]
             [reset-button game]])
        [:center
         [:p
-         [grid game]]]])))
+         [grid game view]]]])))
 
 (defn home-page []
   [:div [:h2 "Welcome to Codenames"]
@@ -101,9 +105,10 @@
 
 (defn game-page []
   (fn []
-    (let [game (atom (g/prepare-game))]
-      [:div [:h2 "Codenames"]
-       [main-panel game]])))
+    (let [game (atom (g/prepare-game))
+          view (atom :player)]
+      [:div [title-bar]
+       [main-panel game view]])))
 
 ;; -------------------------
 ;; Routes

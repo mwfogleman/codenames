@@ -21,9 +21,6 @@
 (deftest game-is-a-map
   (is (map? a-game)))
 
-(deftest starting-view-is-player-view
-  (is (= (:view a-game) :player)))
-
 (deftest starting-team-is-current-team
   (let [{:keys [starting-team current-team]} a-game]
     (is (= starting-team current-team))))

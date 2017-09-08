@@ -27,17 +27,8 @@
     (is (thrown? AssertionError (m/opposite-team :green)))))
 
 (deftest we-can-switch-the-view
-  (let [v   (:view a-game)
-        g   (m/switch-view! a-game)
-        v'  (:view g)
-        g'  (m/switch-view! g)
-        v'' (:view g')]
-    (testing "we start with player-view"
-      (is (= v :player)))
-    (testing "but that can change for spymasters!"
-      (is (= v' :spymaster)))
-    (testing "or, back to player view!"
-      (is (= v'' :player)))))
+  (is (= (m/switch-view! :player) :spymaster))
+  (is (= (m/switch-view! :spymaster) :player)))
 
 (defn valid-player-team?
   [team]
