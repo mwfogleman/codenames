@@ -13,28 +13,40 @@
 (defn title-bar []
   [:div [:h2 "Codenames"]])
 
+(defn colorize-team [team]
+  (let [pr (if (= team :blue)
+             [:span.blue]
+             [:span.red])]
+    (->> team name (conj pr))))
+
 (defn game-status-bar [game]
   (let [g      @game
         turn   (q/get-current-team g)
         winner (q/get-winner g)]
-    [:div
+    [:div#game-status
      (if winner
-       [:div "The " (name winner) " team wins!"]
-       [:div "It's the " (name turn) " team's turn."])]))
+       [:span "The " (colorize-team winner) " team wins!"]
+       [:span "It's the " (colorize-team turn) " team's turn."])]))
 
 (defn remaining [game]
   (fn []
-    (let [g    @game
-          red  (-> g :remaining :red)
-          blue (-> g :remaining :blue)]
-      [:div.remaining
-       [:span.red red] " - " [:span.blue blue]])))
+    (let [g      @game
+          red    (-> g :remaining :red)
+          r-span [:span.red red]
+          blue   (-> g :remaining :blue)
+          b-span [:span.blue blue]]
+      [:span#remaining
+       (if (> red blue)
+         [:span
+          r-span " - " b-span]
+         [:span
+          b-span " - " r-span])])))
 
-(defn change-turn-button [game]
+(defn next-turn-button [game]
   (fn []
     (let [g @game
           turn   (q/get-current-team g)]
-      [:button {:on-click #(swap! game m/next-turn!)}
+      [:button#next-turn.game {:on-click #(swap! game m/next-turn!)}
        "End the " (name turn) " team's turn."])))
 
 (defn turn-status-bar [game view]
@@ -45,13 +57,13 @@
       (if (and (= v :player) (false? w))
         [:div
          [remaining game]
-         [change-turn-button game]]
+         [next-turn-button game]]
         [remaining game]))))
 
 (defn view-toggle [view]
   (fn []
     (let [v @view]
-      [:button {:on-click #(swap! view m/switch-view!)}
+      [:button#view.game {:on-click #(swap! view m/switch-view!)}
        (if (= v :player)
          "Spymaster"
          "Player")])))
@@ -59,15 +71,16 @@
 (defn reset-button [game]
   (fn []
     (let [g @game]
-      [:button {:on-click #(reset! game (g/prepare-game))}
+      [:button#reset.game {:on-click #(reset! game (g/prepare-game))}
        "Next Game"])))
 
 (defn gameplay-bar [game view]
   (fn []
-    (let [g @game
-          v @view]
-      [:div
-       [view-toggle view]
+    (let [g        @game
+          v        @view
+          in-play? (nil? (:winning-team g))]
+      [:div#gameplay-bar
+       (when in-play? [view-toggle view])
        [reset-button game]])))
 
 (defn colorize [word identity]
@@ -83,10 +96,11 @@
           v                                 @view
           {:keys [word identity revealed?]} (q/get-cell g x y)
           winner                            (q/get-winner g)
-          w                                 [:span.word [colorize word identity]]]
+          w                                 [:span.word.revealed [colorize word identity]]]
       (if (or (= v :spymaster) winner (true? revealed?))
         w
-        [:button.unrevealed {:on-click #(swap! game m/move! word)}
+        [:button.word
+         {:on-click #(swap! game m/move! word)}
          word]))))
 
 (defn grid [game view]
@@ -94,7 +108,7 @@
    (for [y (range 5)]
      [:tr
       (for [x (range 5)]
-        [:td.cell
+        [:td
          [cell game view x y]])])])
 
 (defn main-panel [game view]
@@ -105,9 +119,7 @@
           winner (q/get-winner g)]
       [:div
        [game-status-bar game]
-       (if winner
-         [reset-button game]
-         [turn-status-bar game view])
+       [turn-status-bar game view]
        [:center
         [:p
          [grid game view]
@@ -122,7 +134,6 @@
     (let [game (atom (g/prepare-game))
           view (atom :player)]
       [:div [title-bar]
-       [:hr]
        [main-panel game view]])))
 
 ;; -------------------------
