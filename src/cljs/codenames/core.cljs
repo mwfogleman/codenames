@@ -3,6 +3,7 @@
             [clojure.string :as str]
             [codenames.game :as g]
             [codenames.moves :as m]
+            [codenames.queries :as q]
             [reagent.core :as reagent :refer [atom]]
             [secretary.core :as secretary :include-macros true]))
 
@@ -11,8 +12,8 @@
 
 (defn status-bar [game]
   (let [g      @game
-        turn   (m/get-current-team g)
-        winner (m/get-winner g)]
+        turn   (q/get-current-team g)
+        winner (q/get-winner g)]
     [:div
      (if winner
        [:div (->> winner name str/capitalize) " is the winner."]
@@ -27,7 +28,7 @@
 (defn change-turn-button [game]
   (fn []
     (let [g @game
-          turn   (m/get-current-team g)]
+          turn   (q/get-current-team g)]
       [:button {:on-click #(swap! game m/next-turn!)}
        "End " (name turn) "'s turn."])))
 
@@ -56,8 +57,8 @@
   (fn []
     (let [g                                 @game
           v                                 (:view g)
-          {:keys [word identity revealed?]} (m/get-cell g x y)
-          winner                            (m/get-winner g)
+          {:keys [word identity revealed?]} (q/get-cell g x y)
+          winner                            (q/get-winner g)
           w [:span.word [colorize word identity]]]
       (if (= v :player)
         (if winner
@@ -80,8 +81,8 @@
 (defn main-panel [game]
   (fn []
     (let [g      @game
-          turn   (m/get-current-team g)
-          winner (m/get-winner g)]
+          turn   (q/get-current-team g)
+          winner (q/get-winner g)]
       [:div
        [status-bar game]
        (if winner [:div [reset-button game]]
