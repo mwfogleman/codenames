@@ -13,7 +13,7 @@
 (defn title-bar []
   [:div [:h2 "Codenames"]])
 
-(defn status-bar [game]
+(defn game-status-bar [game]
   (let [g      @game
         turn   (q/get-current-team g)
         winner (q/get-winner g)]
@@ -22,11 +22,13 @@
        [:div (->> winner name str/capitalize) " is the winner."]
        [:div "It's " (name turn) "'s turn."])]))
 
-(defn view-toggle [view]
+(defn remaining [game]
   (fn []
-    (let [v @view]
-      [:button {:on-click #(swap! view m/switch-view!)}
-       "Toggle view."])))
+    (let [g    @game
+          red  (-> g :remaining :red)
+          blue (-> g :remaining :blue)]
+      [:div.remaining
+       [:span.red red] " - " [:span.blue blue]])))
 
 (defn change-turn-button [game]
   (fn []
@@ -35,19 +37,28 @@
       [:button {:on-click #(swap! game m/next-turn!)}
        "End " (name turn) "'s turn."])))
 
+(defn turn-status-bar [game view]
+  (fn []
+    (let [g @game
+          v @view
+          w (q/winner? g)]
+      (if (and (= v :player) (false? w))
+        [:div
+         [remaining game]
+         [change-turn-button game]]
+        [remaining game]))))
+
+(defn view-toggle [view]
+  (fn []
+    (let [v @view]
+      [:button {:on-click #(swap! view m/switch-view!)}
+       "Toggle view."])))
+
 (defn reset-button [game]
   (fn []
     (let [g @game]
       [:button {:on-click #(reset! game (g/prepare-game))}
        "Start a new game!"])))
-
-(defn remaining-display [game]
-  (fn []
-    (let [g    @game
-          red  (-> g :remaining :red)
-          blue (-> g :remaining :blue)]
-      [:div.remaining
-       [:span.red red] " - " [:span.blue blue]])))
 
 (defn colorize [word identity]
   (case identity
@@ -88,12 +99,11 @@
           turn   (q/get-current-team g)
           winner (q/get-winner g)]
       [:div
-       [status-bar game]
+       [game-status-bar game]
        (if winner [:div [reset-button game]]
            [:div
             [view-toggle view]
-            [remaining-display game]
-            [change-turn-button game]
+            [turn-status-bar game view]
             [reset-button game]])
        [:center
         [:p
