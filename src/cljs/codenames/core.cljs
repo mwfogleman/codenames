@@ -9,6 +9,15 @@
 ;; -------------------------
 ;; Views
 
+(defn status-bar [game]
+  (let [g      @game
+        turn   (m/get-current-team g)
+        winner (m/get-winner g)]
+    [:div
+     (if winner
+       [:div (->> winner name str/capitalize) " is the winner."]
+       [:div "It's " (name turn) "'s turn."])]))
+
 (defn view-toggle [game]
   (fn []
     (let [g @game]
@@ -48,18 +57,17 @@
     (let [g                                 @game
           v                                 (:view g)
           {:keys [word identity revealed?]} (m/get-cell g x y)
-          winner                            (m/get-winner g)]
+          winner                            (m/get-winner g)
+          w [:span.word [colorize word identity]]]
       (if (= v :player)
         (if winner
-          [:span.word
-           [colorize word identity]]
+          w
           (if (true? revealed?)
-            [:span.word
-             [colorize word identity]]
+            w
             [:button.unrevealed {:on-click #(swap! game m/move! word)}
              word]))
         [:span.word
-         [colorize word identity]]))))
+         w]))))
 
 (defn grid [game]
   [:table
@@ -75,17 +83,13 @@
           turn   (m/get-current-team g)
           winner (m/get-winner g)]
       [:div
-       (if winner
-         [:div
-          [reset-button game]
-          [:div
-           (str/capitalize (name winner)) " is the winner."]]
-         [:div
-          [:div "It's " (name turn) "'s turn."]
-          [view-toggle game]
-          [remaining-display game]
-          [change-turn-button game]
-          [reset-button game]])
+       [status-bar game]
+       (if winner [:div [reset-button game]]
+           [:div
+            [view-toggle game]
+            [remaining-display game]
+            [change-turn-button game]
+            [reset-button game]])
        [:center
         [:p
          [grid game]]]])))
