@@ -58,20 +58,14 @@
          (q/hidden? game word)
          (= false (q/winner? game))]}
   (let [g                  (-> game (reveal! word) (update-remaining!))
-        current-team       (q/get-current-team g)
-        id                 (q/get-id-of-word g word)
-        match-result       (= id current-team) ;; Register whether they picked someone on their team, or on the other team.
+        assassin?          (q/assassin? g word)
+        match?             (q/word-id-matches-current-team? g word)
         {:keys [blue red]} (q/get-remaining g)]
-    (cond (= id :assassin) (lose! g)
-          (and (> blue 0) (> red 0)) ;; Check if there are remaining hidden cards for either team.
+    (cond assassin? (lose! g)
+          ;; Check if there are remaining hidden cards for either team.
           ;; If they picked someone on their team, they can keep moving
           ;; If they picked someone from the other team, switch to make it the other team's turn.
-          (if (true? match-result)
-            g
-            (next-turn! g))
-          :else
-          (if (true? match-result)
-            ;; If the card picked was theirs, win!
-            (win! g)
-            ;; Otherwise, lose!
-            (lose! g)))))
+          (and (> blue 0) (> red 0)) (if match? g (next-turn! g))
+          ;; If the card picked was theirs, win!
+          ;; Otherwise, lose!
+          :else (if match? (win! g) (lose! g)))))

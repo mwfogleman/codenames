@@ -16,6 +16,10 @@
 
 (def a-game (game/prepare-game))
 
+(deftest assassin?-works
+  (let [w (q/get-the-assassin a-game)]
+    (is (q/assassin? a-game w))))
+
 (deftest get-current-team-works
   (let [current-team (q/get-current-team a-game)]
     (is (in? [:red :blue] current-team))))
@@ -73,3 +77,9 @@
            #{:red :blue}))
     (is (= vs
            #{8 9}))))
+
+(deftest word-id-matches-current-team?-works
+  (let [current-team (q/get-current-team a-game)
+        f            (if (= current-team :red) q/get-a-red q/get-a-blue)
+        w            (f a-game)]
+    (is (q/word-id-matches-current-team? a-game w))))

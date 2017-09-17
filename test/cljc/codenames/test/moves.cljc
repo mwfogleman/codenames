@@ -73,20 +73,20 @@
     (let [g (m/set-winner! a-game :red)]
       (is (= (q/get-winner g)
              :red))
-      (is (true? (m/winner? g)))))
+      (is (true? (q/winner? g)))))
   (testing "win! makes the current-team the winner"
     (let [current-team (q/get-current-team a-game)
           g            (m/win! a-game)]
       (is (= (q/get-winner g)
              current-team))
-      (is (true? (m/winner? g)))))
+      (is (true? (q/winner? g)))))
   (testing "lose! makes the current-team the winner"
     (let [current-team  (q/get-current-team a-game)
           opposite-team (m/opposite-team current-team)
           g             (m/lose! a-game)]
       (is (= (q/get-winner g)
              opposite-team))
-      (is (true? (m/winner? g))))))
+      (is (true? (q/winner? g))))))
 
 (deftest update-remaining-works
   (let [initial-remaining     (q/get-remaining a-game)
@@ -260,11 +260,11 @@
 (deftest move-can-make-you-win-or-lose
   (testing "if there are no blue-remaining after your move, blue wins! (if you're blue, you win. if you're red, you lose.)"
     (let [initial-remaining (q/get-remaining one-blue-remaining)
-          initial-winner    (m/winner? one-blue-remaining)
+          initial-winner    (q/winner? one-blue-remaining)
           current-team      (q/get-current-team one-blue-remaining)
           g                 (m/move! one-blue-remaining "SPINE")
           new-remaining     (q/get-remaining g)
-          new-winner        (m/winner? g)
+          new-winner        (q/winner? g)
           winner            (q/get-winner g)]
       (is (= (:blue initial-remaining) 1))
       (is (false? initial-winner))
@@ -276,11 +276,11 @@
 
   (testing "if there are no red-remaining after your move, red wins! (if you're red, you win. if you're blue, you lose.)"
     (let [initial-remaining (q/get-remaining one-red-remaining)
-          initial-winner    (m/winner? one-red-remaining)
+          initial-winner    (q/winner? one-red-remaining)
           current-team      (q/get-current-team one-red-remaining)
           g                 (m/move! one-red-remaining "STRIKE")
           new-remaining     (q/get-remaining g)
-          new-winner        (m/winner? g)
+          new-winner        (q/winner? g)
           winner            (q/get-winner g)]
       (is (= (:red initial-remaining) 1))
       (is (false? initial-winner))

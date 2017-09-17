@@ -17,6 +17,9 @@
 
 (def get-a-neutral (get-a-word-of-identity :neutral))
 
+(defn assassin? [game word]
+  (= (:identity (get-a-particular-word game word)) :assassin))
+
 (def get-current-team :current-team)
 
 (def get-winner :winning-team)
@@ -58,6 +61,11 @@
 
 (defn get-id-of-word [game word]
   (S/select-any [:words (S/filterer #(word-filterer word %)) S/ALL :identity] game))
+
+(defn word-id-matches-current-team? [game word]
+  (let [word-id      (get-id-of-word game word)
+        current-team (get-current-team game)]
+    (= word-id current-team)))
 
 (defn winner?
   "If a GAME has a winner, return true. If not, return false."
