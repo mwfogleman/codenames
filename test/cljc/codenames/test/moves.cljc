@@ -114,7 +114,7 @@
 ;; move!
 
 (deftest move-can-throw-assertions
-  (testing "assertions are thrown for invalid words, such as SCREWDRIVER" 
+  (testing "assertions are thrown for invalid words, such as SCREWDRIVER"
     (is (thrown? AssertionError (m/move! a-game "SCREWDRIVER"))))
   (testing "assertions are thrown for revealed words"
     (let [a-word (-> a-game :words rand-nth :word)
@@ -166,7 +166,7 @@
 (deftest picking-neutral-causes-it-to-be-the-other-teams-turn
   (let [a-neutral            (q/get-a-neutral a-game)
         initial-round        (:round a-game)
-        initial-current-team (q/get-current-team a-game)    
+        initial-current-team (q/get-current-team a-game)
         g                    (m/move! a-game a-neutral)
         new-round            (:round g)
         new-current-team     (q/get-current-team g)]
@@ -220,7 +220,6 @@
      {:word "SHAKESPEARE", :identity :neutral, :revealed? false, :position [4 3]}
      {:word "LONDON", :identity :assassin, :revealed? false, :position [0 4]}),
    :round 0,
-   :id "G__47791",
    :winning-team nil})
 
 (def one-red-remaining
@@ -254,7 +253,6 @@
      {:word "PLOT", :identity :neutral, :revealed? false, :position [0 4]}
      {:word "HAWK", :identity :assassin, :revealed? false, :position [1 0]}),
    :round 0,
-   :id "G__47795",
    :winning-team nil})
 
 (deftest move-can-make-you-win-or-lose

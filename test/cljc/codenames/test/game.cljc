@@ -48,11 +48,6 @@
 (deftest no-one-has-won
   (is (nil? (:winning-team a-game))))
 
-(deftest id-is-a-gensym-string
-  (let [{:keys [id]} a-game]
-    (is (string? id))
-    (is (some? (re-seq #"\w*\_*\d+" id)))))
-
 (deftest words-tests
   (let [all-words                                  (:words a-game)
         a-word-map                                 (rand-nth all-words)
