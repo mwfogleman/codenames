@@ -2,12 +2,14 @@
   #?(:clj
      (:require [codenames.game :as game]
                [codenames.moves :as m]
+               [codenames.queries :as q]
                [codenames.util :refer [in?]]
                [com.rpl.specter :as S]
                [clojure.test :refer :all])
      :cljs
      (:require [codenames.game :as game]
                [codenames.moves :as m]
+               [codenames.queries :as q]
                [codenames.util :refer [in?]]
                [com.rpl.specter :as S]
                [cljs.test :refer-macros [deftest is testing]])))
@@ -83,7 +85,7 @@
                   position)))))
 
 (deftest starting-alliances-and-revealed-are-sensible
-  (let [freqs             (m/get-freqs a-game)
+  (let [freqs             (q/get-freqs a-game)
         revealed-statuses (->> freqs keys (map second))
         total             (->> freqs vals (apply +))
         hidden-civilians  (get freqs [:neutral false])
