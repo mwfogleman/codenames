@@ -7,6 +7,7 @@
   :dependencies [[com.rpl/specter "1.0.3"]
                  [compojure "1.6.0"]
                  [hiccup "1.0.5"]
+                 [metosin/compojure-api "2.0.0-alpha7"]
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"
                   :scope "provided"]
