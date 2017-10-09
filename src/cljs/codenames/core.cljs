@@ -44,8 +44,8 @@
 
 (defn next-turn-button [game]
   (fn []
-    (let [g @game
-          turn   (q/get-current-team g)]
+    (let [g    @game
+          turn (q/get-current-team g)]
       [:button#next-turn.game {:on-click #(swap! game m/next-turn!)}
        "End the " (name turn) " team's turn."])))
 
