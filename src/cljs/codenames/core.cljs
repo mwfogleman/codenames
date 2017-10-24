@@ -129,12 +129,13 @@
   [:div [:h2 "Welcome to Codenames"]
    [:div [:a {:href "/game"} "Play a game!"]]])
 
+(def game (atom (g/prepare-game)))
+(def view (atom :player))
+
 (defn game-page []
   (fn []
-    (let [game (atom (g/prepare-game))
-          view (atom :player)]
-      [:div [title-bar]
-       [main-panel game view]])))
+    [:div [title-bar]
+     [main-panel game view]]))
 
 ;; -------------------------
 ;; Routes

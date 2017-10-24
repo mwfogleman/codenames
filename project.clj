@@ -54,7 +54,8 @@
               :output-dir       "target/cljsbuild/public/js"
               :source-map       "target/cljsbuild/public/js/app.js.map"
               :optimizations :advanced
-              :pretty-print  false}}
+              :pretty-print  false
+              :preloads [re-frisk.preload]}}
             :app
             {:source-paths ["src/cljs" "src/cljc" "env/dev/cljs"]
              :figwheel {:on-jsload "codenames.core/mount-root"}
@@ -88,6 +89,7 @@
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [pjstadig/humane-test-output "0.8.2"]
                                   [prone "1.1.4"]
+                                  [re-frisk "0.5.0"]
                                   [ring/ring-devel "1.6.2"]
                                   [ring/ring-mock "0.3.1"]]
 
