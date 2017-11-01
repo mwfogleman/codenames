@@ -4,7 +4,8 @@
             [hiccup.page :refer [include-js include-css html5]]
             [codenames.middleware :refer [wrap-middleware]]
             [config.core :refer [env]]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [codenames.api :refer [game-routes]]))
 
 (def Team (s/enum :red :blue))
 (def Identity (s/enum :red :blue :assassin :neutral))
@@ -63,6 +64,7 @@
 (defroutes routes
   (GET "/" [] (loading-page))
   (GET "/about" [] (loading-page))
+  #'game-routes
 
   (resources "/")
   (not-found "Not Found"))
