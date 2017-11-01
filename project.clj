@@ -19,7 +19,8 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.0"
                   :exclusions [org.clojure/tools.reader]]
-                 [yogthos/config "0.9"]]
+                 [yogthos/config "0.9"]
+                 [clj-time "0.14.0"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
