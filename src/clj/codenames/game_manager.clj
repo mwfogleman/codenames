@@ -1,7 +1,7 @@
 (ns codenames.game-manager
-  (:require [codenames.game :refer [prepare-game]]
+  (:require [clj-time.core :as t]
+            [codenames.game :refer [prepare-game]]
             [com.rpl.specter :refer :all]
-            [clj-time.core :as t]
             [schema.core :as s]))
 
 (def games (atom {}))

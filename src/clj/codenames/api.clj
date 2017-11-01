@@ -1,8 +1,8 @@
 (ns codenames.api
-  (:require [compojure.api.sweet :refer :all]
+  (:require [codenames.game-manager :refer [get-game]]
+            [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
-            [schema.core :as s]
-            [codenames.game-manager :refer [get-game]]))
+            [schema.core :as s]))
 
 (def Team (s/enum :red :blue))
 (def Identity (s/enum :red :blue :assassin :neutral))

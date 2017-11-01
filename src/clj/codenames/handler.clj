@@ -1,10 +1,10 @@
 (ns codenames.handler
-  (:require [compojure.core :refer [GET defroutes]]
-            [compojure.route :refer [not-found resources]]
-            [hiccup.page :refer [include-js include-css html5]]
+  (:require [codenames.api :refer [game-routes]]
             [codenames.middleware :refer [wrap-middleware]]
+            [compojure.core :refer [GET defroutes]]
+            [compojure.route :refer [not-found resources]]
             [config.core :refer [env]]
-            [codenames.api :refer [game-routes]]))
+            [hiccup.page :refer [include-js include-css html5]]))
 
 (def mount-target
   [:div#app
