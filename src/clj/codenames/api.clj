@@ -1,7 +1,8 @@
 (ns codenames.api
   (:require [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
-            [schema.core :as s]))
+            [schema.core :as s]
+            [codenames.game-manager :refer [get-game]]))
 
 (def Team (s/enum :red :blue))
 (def Identity (s/enum :red :blue :assassin :neutral))
@@ -36,6 +37,11 @@
    :words Words})
 
 (defapi game-routes
+  (GET "/game/:id" []
+    :path-params [id :- s/Str]
+    :return Game
+    :summary ""
+    (ok (get-game id)))
   (GET "/hello" []
        :query-params [name :- String]
        (ok {:message (str "Hello, " name)})))
