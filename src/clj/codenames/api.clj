@@ -41,7 +41,4 @@
     :path-params [id :- s/Str]
     :return Game
     :summary ""
-    (ok (get-game id)))
-  (GET "/hello" []
-       :query-params [name :- String]
-       (ok {:message (str "Hello, " name)})))
+    (ok (get-game id))))
