@@ -4,7 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
-  :dependencies [[com.rpl/specter "1.0.3"]
+  :dependencies [[clj-time "0.14.0"]
+                 [com.rpl/specter "1.0.3"]
                  [compojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [metosin/compojure-api "2.0.0-alpha7"]
@@ -19,8 +20,7 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.0"
                   :exclusions [org.clojure/tools.reader]]
-                 [yogthos/config "0.9"]
-                 [clj-time "0.14.0"]]
+                 [yogthos/config "0.9"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
