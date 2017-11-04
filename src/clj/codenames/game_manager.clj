@@ -6,14 +6,32 @@
 
 (def games (atom {}))
 
+;; Query Games
+
 (defn game-exists? [id]
   (contains? @games id))
+
+(defn get-game [id]
+  (select-any [ATOM (keypath id) :game] games))
+
+(defn get-game-keys []
+  (-> @games keys))
+
+;; Create and Update Games
 
 (defn create-game! [id]
   (setval [ATOM (keypath id)] {:game (prepare-game)
                                :created-at (t/now)} games))
 
-(defn get-game [id]
+(def reset-game! create-game!)
+
+(defn get-game! [id]
   (when-not (game-exists? id)
     (create-game! id))
-  (select-any [ATOM (keypath id) :game] games))
+  (get-game id))
+
+(defn delete-game! [id]
+  (setval [ATOM (keypath id)] NONE games))
+
+(defn delete-all-games! []
+  (map delete-game! (get-game-keys)))
