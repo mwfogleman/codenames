@@ -19,7 +19,7 @@
     (is (= k #{:starting-team :current-team :remaining :winning-team :round :words}))))
 
 (deftest we-can-reset-games
-  (let [get-assassin      (fn [] (codenames.queries/get-the-assassin (-> @manager/games (get "test") :game)))
+  (let [get-assassin      (fn [] (codenames.queries/get-the-assassin (-> @manager/games (get "test") :state)))
         g                 (manager/get-game "test")
         original-assassin (get-assassin)
         _                 (manager/reset-game! "test")
