@@ -11,14 +11,21 @@
 (defn game-exists? [id]
   (contains? @games id))
 
+(defn get-game-keys []
+  (-> @games keys))
+
 (defn get-game-state [id]
   (select-any [ATOM (keypath id) :state] games))
 
 (defn get-game-creation-time [id]
   (select-any [ATOM (keypath id) :created-at] games))
 
-(defn get-game-keys []
-  (-> @games keys))
+(defn stale-game? [id]
+  (let [t (get-game-creation-time id)]
+    (t/after? (t/yesterday) t)))
+
+(defn get-stale-games []
+  (filter stale-game? (get-game-keys)))
 
 ;; Create and Update Games
 
@@ -38,3 +45,6 @@
 
 (defn delete-all-games! []
   (map delete-game! (get-game-keys)))
+
+(defn delete-stale-games! []
+  (map delete-game! (get-stale-games)))
