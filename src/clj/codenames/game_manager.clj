@@ -5,6 +5,10 @@
 
 (def games (atom {}))
 
+;; Paths
+
+(defn game-path [id] (path ATOM (keypath id)))
+
 ;; Query Games
 
 (defn game-exists? [id]
@@ -14,10 +18,10 @@
   (-> @games keys))
 
 (defn get-game-state [id]
-  (select-any [ATOM (keypath id) :state] games))
+  (select-any [(game-path id) :state] games))
 
 (defn get-game-creation-time [id]
-  (select-any [ATOM (keypath id) :created-at] games))
+  (select-any [(game-path id) :created-at] games))
 
 (defn stale-game? [id]
   (let [t (get-game-creation-time id)]
@@ -29,8 +33,8 @@
 ;; Create and Update Games
 
 (defn create-game! [id]
-  (setval [ATOM (keypath id)] {:state (prepare-game)
-                               :created-at (t/now)} games))
+  (setval (game-path id) {:state (prepare-game)
+                          :created-at (t/now)} games))
 
 (def reset-game! create-game!)
 
@@ -40,7 +44,7 @@
   (get-game-state id))
 
 (defn delete-game! [id]
-  (setval [ATOM (keypath id)] NONE games))
+  (setval (game-path id) NONE games))
 
 (defn delete-all-games! []
   (map delete-game! (get-game-keys)))
