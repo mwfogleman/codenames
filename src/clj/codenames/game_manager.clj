@@ -11,9 +11,6 @@
 
 ;; Query Games
 
-(defn game-exists? [id]
-  (contains? @games id))
-
 (defn get-game-keys []
   (-> @games keys))
 
@@ -39,7 +36,7 @@
 (def reset-game! create-game!)
 
 (defn get-game! [id]
-  (when-not (game-exists? id)
+  (when-not (contains? @games id)
     (create-game! id))
   (get-game-state id))
 
