@@ -1,7 +1,8 @@
 (ns codenames.game-manager
   (:require [clj-time.core :as t]
             [codenames.game :refer [prepare-game]]
-            [com.rpl.specter :refer :all]))
+            [com.rpl.specter :refer :all]
+            [immutant.scheduling :as scheduling]))
 
 (def games (atom {}))
 
@@ -41,3 +42,9 @@
 
 (defn delete-stale-games! []
   (map delete-game! (get-stale-games)))
+
+(defn job []
+  (when-not (empty? @games)
+    (delete-stale-games!)))
+
+(scheduling/schedule job :every :day)
