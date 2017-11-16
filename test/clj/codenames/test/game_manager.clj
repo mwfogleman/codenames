@@ -12,7 +12,7 @@
 
 (deftest we-can-add-games
   (manager/create-game! "test")
-  (is (manager/game-exists? "test")))
+  (is (contains? @manager/games "test")))
 
 (deftest we-can-get-games
   (let [k (set (keys (manager/get-game! "test")))]

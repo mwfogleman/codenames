@@ -11,21 +11,14 @@
 
 ;; Query Games
 
-(defn get-game-keys []
-  (-> @games keys))
-
 (defn get-game-state [id]
   (select-any [(game-path id) :state] games))
 
 (defn get-game-creation-time [id]
   (select-any [(game-path id) :created-at] games))
 
-(defn stale-game? [id]
-  (let [t (get-game-creation-time id)]
-    (t/after? (t/yesterday) t)))
-
 (defn get-stale-games []
-  (filter stale-game? (get-game-keys)))
+  (filter #(t/after? (t/yesterday) (get-game-creation-time %)) (get-game-keys)))
 
 ;; Create and Update Games
 
@@ -44,7 +37,7 @@
   (setval (game-path id) NONE games))
 
 (defn delete-all-games! []
-  (map delete-game! (get-game-keys)))
+  (map delete-game! (keys @games)))
 
 (defn delete-stale-games! []
   (map delete-game! (get-stale-games)))
