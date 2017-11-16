@@ -21,8 +21,8 @@
 
 (defn game-status-bar [game]
   (let [g      @game
-        turn   (q/get-current-team g)
-        winner (q/get-winner g)]
+        turn   (:current-team g)
+        winner (:winning-team g)]
     [:div#game-status
      (if winner
        [:span "The " (colorize-team winner) " team wins!"]
@@ -45,7 +45,7 @@
 (defn next-turn-button [game]
   (fn []
     (let [g    @game
-          turn (q/get-current-team g)]
+          turn (:current-team g)]
       [:button#next-turn.game {:on-click #(swap! game m/next-turn!)}
        "End the " (name turn) " team's turn."])))
 
@@ -95,7 +95,7 @@
     (let [g                                 @game
           v                                 @view
           {:keys [word identity revealed?]} (q/get-cell g x y)
-          winner                            (q/get-winner g)
+          winner                            (:winning-team g)
           w                                 [:span.word.revealed [colorize word identity]]]
       (if (or (= v :spymaster) winner (true? revealed?))
         w
@@ -115,8 +115,8 @@
   (fn []
     (let [g      @game
           v      @view
-          turn   (q/get-current-team g)
-          winner (q/get-winner g)]
+          turn   (:current-team g)
+          winner (:winning-team g)]
       [:div
        [game-status-bar game]
        [turn-status-bar game view]

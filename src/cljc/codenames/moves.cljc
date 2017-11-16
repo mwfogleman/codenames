@@ -35,13 +35,13 @@
 (defn win!
   "Makes the current team win the game."
   [game]
-  (let [winner (q/get-current-team game)]
+  (let [winner (:current-team game)]
     (set-winner! game winner)))
 
 (defn lose!
   "Makes the current team lose the game."
   [game]
-  (let [loser (q/get-current-team game)
+  (let [loser (:current-team game)
         winner (opposite-team loser)]
     (set-winner! game winner)))
 
@@ -60,7 +60,7 @@
   (let [g                  (-> game (reveal! word) (update-remaining!))
         assassin?          (q/assassin? g word)
         match?             (q/word-id-matches-current-team? g word)
-        {:keys [blue red]} (q/get-remaining g)]
+        {:keys [blue red]} (:remaining g)]
     (cond assassin? (lose! g)
           ;; Check if there are remaining hidden cards for either team.
           ;; If they picked someone on their team, they can keep moving

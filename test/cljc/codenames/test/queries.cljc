@@ -20,10 +20,6 @@
   (let [w (q/get-the-assassin a-game)]
     (is (q/assassin? a-game w))))
 
-(deftest get-current-team-works
-  (let [current-team (q/get-current-team a-game)]
-    (is (in? [:red :blue] current-team))))
-
 (deftest we-can-check-if-words-are-valid
   (let [a-word (-> a-game :words rand-nth :word)]
     (is (q/valid-word? a-game a-word))))
@@ -69,17 +65,8 @@
     (is (= (q/get-id-of-word a-game a)
            :assassin))))
 
-(deftest get-remaining-works
-  (let [remaining (q/get-remaining a-game)
-        ks        (set (keys remaining))
-        vs        (set (vals remaining))]
-    (is (= ks
-           #{:red :blue}))
-    (is (= vs
-           #{8 9}))))
-
 (deftest word-id-matches-current-team?-works
-  (let [current-team (q/get-current-team a-game)
+  (let [current-team (:current-team a-game)
         f            (if (= current-team :red) q/get-a-red q/get-a-blue)
         w            (f a-game)]
     (is (q/word-id-matches-current-team? a-game w))))

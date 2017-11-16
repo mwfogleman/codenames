@@ -20,12 +20,6 @@
 (defn assassin? [game word]
   (= (:identity (get-a-particular-word game word)) :assassin))
 
-(def get-current-team :current-team)
-
-(def get-winner :winning-team)
-
-(def get-remaining :remaining)
-
 (defn valid-word? [game word]
   (let [words (S/select [:words S/ALL :word] game)]
     (in? words word)))
@@ -64,15 +58,12 @@
 
 (defn word-id-matches-current-team? [game word]
   (let [word-id      (get-id-of-word game word)
-        current-team (get-current-team game)]
+        current-team (:current-team game)]
     (= word-id current-team)))
 
 (defn winner?
   "If a GAME has a winner, return true. If not, return false."
   [game]
   (->> game
-       get-winner
+       :winning-team
        some?))
-
-
-

@@ -46,19 +46,19 @@
     (is (< initial-round new-round another-round))))
 
 (deftest switch-teams-works
-  (let [current-team (q/get-current-team a-game)
+  (let [current-team (:current-team a-game)
         g            (m/switch-teams! a-game)
-        new-team     (q/get-current-team g)]
+        new-team     (:current-team g)]
     (is (valid-player-team? current-team))
     (is (valid-player-team? new-team))
     (is (not= current-team new-team))))
 
 (deftest next-turn-combines-next-round-and-switch-teams
   (let [initial-round (:round a-game)
-        current-team  (q/get-current-team a-game)
+        current-team  (:current-team a-game)
         g             (m/next-turn! a-game)
         new-round     (:round g)
-        new-team      (q/get-current-team g)]
+        new-team      (:current-team g)]
     (is (= initial-round 0))
     (is (= new-round 1))
     (is (valid-player-team? current-team))
@@ -67,36 +67,36 @@
 
 (deftest winners
   (testing "there is no winner to start"
-    (is (nil? (q/get-winner a-game)))
+    (is (nil? (:winning-team a-game)))
     (is (false? (q/winner? a-game))))
   (testing "we can make :red the winner"
     (let [g (m/set-winner! a-game :red)]
-      (is (= (q/get-winner g)
+      (is (= (:winning-team g)
              :red))
       (is (true? (q/winner? g)))))
   (testing "win! makes the current-team the winner"
-    (let [current-team (q/get-current-team a-game)
+    (let [current-team (:current-team a-game)
           g            (m/win! a-game)]
-      (is (= (q/get-winner g)
+      (is (= (:winning-team g)
              current-team))
       (is (true? (q/winner? g)))))
   (testing "lose! makes the current-team the winner"
-    (let [current-team  (q/get-current-team a-game)
+    (let [current-team  (:current-team a-game)
           opposite-team (m/opposite-team current-team)
           g             (m/lose! a-game)]
-      (is (= (q/get-winner g)
+      (is (= (:winning-team g)
              opposite-team))
       (is (true? (q/winner? g))))))
 
 (deftest update-remaining-works
-  (let [initial-remaining     (q/get-remaining a-game)
+  (let [initial-remaining     (:remaining a-game)
         initial-red-remaining (:red initial-remaining)
         initial-hidden-total  (->> initial-remaining vals (apply +))
         ;; reveal a red, rather than a neutral or the assassin. blue would do just as well.
         a-red                 (q/get-a-red a-game)
         g                     (m/reveal! a-game a-red)
         g'                    (m/update-remaining! g)
-        new-remaining         (q/get-remaining g')
+        new-remaining         (:remaining g')
         new-red-remaining     (:red new-remaining)
         new-hidden-total      (->> new-remaining vals (apply +))]
     (testing "all cards are hidden to start, but there are 9 on one team (e.g., :blue) and 8 on the
@@ -135,41 +135,41 @@
     (is (true? new-revealed-status))))
 
 (deftest move-updates-remaining-words
-  (let [initial-remaining (q/get-remaining a-game)
+  (let [initial-remaining (:remaining a-game)
         a-red             (q/get-a-red a-game)
         g                 (m/move! a-game a-red)
-        new-remaining     (q/get-remaining g)]
+        new-remaining     (:remaining g)]
     (is (not= initial-remaining new-remaining))
     (is (= (:red initial-remaining)
            (inc (:red new-remaining))))))
 
 (deftest picking-the-assassin-makes-you-lose
-  (let [initial-winner (q/get-winner a-game)
-        current-team   (q/get-current-team a-game)
+  (let [initial-winner (:winning-team a-game)
+        current-team   (:current-team a-game)
         assassin-word  (q/get-the-assassin a-game)
         g              (m/move! a-game assassin-word)
-        winner         (q/get-winner g)]
+        winner         (:winning-team g)]
     (is (nil? initial-winner))
     (is (= winner
            (m/opposite-team current-team)))))
 
 (deftest if-you-pick-someone-on-your-team-you-can-keep-moving
   (let [initial-round   (:round a-game)
-        initial-team    (q/get-current-team a-game)
+        initial-team    (:current-team a-game)
         good-guess-word (if (= :blue initial-team) (q/get-a-blue a-game) (q/get-a-red a-game))
         g               (m/move! a-game good-guess-word)
         new-round       (:round g)
-        new-team        (q/get-current-team g)]
+        new-team        (:current-team g)]
     (is (= initial-round new-round))
     (is (= initial-team new-team))))
 
 (deftest picking-neutral-causes-it-to-be-the-other-teams-turn
   (let [a-neutral            (q/get-a-neutral a-game)
         initial-round        (:round a-game)
-        initial-current-team (q/get-current-team a-game)
+        initial-current-team (:current-team a-game)
         g                    (m/move! a-game a-neutral)
         new-round            (:round g)
-        new-current-team     (q/get-current-team g)]
+        new-current-team     (:current-team g)]
     (is (not= initial-current-team new-current-team))
     (is (= initial-current-team (m/opposite-team new-current-team)))
     (is (not= initial-round new-round))
@@ -178,11 +178,11 @@
 
 (deftest if-you-pick-someone-on-the-other-team-its-their-turn
   (let [initial-round  (:round a-game)
-        initial-team   (q/get-current-team a-game)
+        initial-team   (:current-team a-game)
         bad-guess-word (if (= :blue initial-team) (q/get-a-red a-game) (q/get-a-blue a-game))
         g              (m/move! a-game bad-guess-word)
         new-round      (:round g)
-        new-team       (q/get-current-team g)]
+        new-team       (:current-team g)]
     (is (not= initial-team new-team))
     (is (= initial-team (m/opposite-team new-team)))
     (is (not= initial-round new-round))
@@ -257,13 +257,13 @@
 
 (deftest move-can-make-you-win-or-lose
   (testing "if there are no blue-remaining after your move, blue wins! (if you're blue, you win. if you're red, you lose.)"
-    (let [initial-remaining (q/get-remaining one-blue-remaining)
+    (let [initial-remaining (:remaining one-blue-remaining)
           initial-winner    (q/winner? one-blue-remaining)
-          current-team      (q/get-current-team one-blue-remaining)
+          current-team      (:current-team one-blue-remaining)
           g                 (m/move! one-blue-remaining "SPINE")
-          new-remaining     (q/get-remaining g)
+          new-remaining     (:remaining g)
           new-winner        (q/winner? g)
-          winner            (q/get-winner g)]
+          winner            (:winning-team g)]
       (is (= (:blue initial-remaining) 1))
       (is (false? initial-winner))
       (is (= current-team :red))
@@ -273,13 +273,13 @@
       (is (= winner :blue))))
 
   (testing "if there are no red-remaining after your move, red wins! (if you're red, you win. if you're blue, you lose.)"
-    (let [initial-remaining (q/get-remaining one-red-remaining)
+    (let [initial-remaining (:remaining one-red-remaining)
           initial-winner    (q/winner? one-red-remaining)
-          current-team      (q/get-current-team one-red-remaining)
+          current-team      (:current-team one-red-remaining)
           g                 (m/move! one-red-remaining "STRIKE")
-          new-remaining     (q/get-remaining g)
+          new-remaining     (:remaining g)
           new-winner        (q/winner? g)
-          winner            (q/get-winner g)]
+          winner            (:winning-team g)]
       (is (= (:red initial-remaining) 1))
       (is (false? initial-winner))
       (is (= current-team :red))
