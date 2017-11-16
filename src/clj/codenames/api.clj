@@ -1,5 +1,5 @@
 (ns codenames.api
-  (:require [codenames.game-manager :refer [get-game]]
+  (:require [codenames.game-manager :refer [get-game!]]
             [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
@@ -38,7 +38,7 @@
 
 (defapi game-routes
   (GET "/game/:id" []
-    :path-params [id :- s/Str]
-    :return Game
-    :summary ""
-    (ok (get-game id))))
+       :path-params [id :- s/Str]
+       :return Game
+       :summary ""
+       (ok (get-game! id))))
