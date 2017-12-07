@@ -19,7 +19,7 @@
   (select-any [(game-path id) :created-at] games))
 
 (defn get-stale-games []
-  (filter #(t/after? (t/yesterday) (get-game-creation-time %)) (get-game-keys)))
+  (filter #(t/after? (t/yesterday) (get-game-creation-time %)) (-> @games keys)))
 
 ;; Create and Update Games
 
