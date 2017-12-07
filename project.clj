@@ -22,7 +22,8 @@
                  [venantius/accountant "0.2.0"
                   :exclusions [org.clojure/tools.reader]]
                  [yogthos/config "0.9"]
-                 [com.taoensso/sente "1.11.0"]]
+                 [com.taoensso/sente "1.11.0"]
+                 [org.immutant/immutant-web "1.1.4"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
