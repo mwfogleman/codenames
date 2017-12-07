@@ -12,39 +12,39 @@
 
 ;; Query Games
 
-(defn get-game-state [id]
-  (select-any [(game-path id) :state] games))
+(defn get-game-state [m id]
+  (select-any [(game-path id) :state] m))
 
-(defn get-game-creation-time [id]
-  (select-any [(game-path id) :created-at] games))
+(defn get-game-creation-time [m id]
+  (select-any [(game-path id) :created-at] m))
 
-(defn get-stale-games []
-  (filter #(t/after? (t/yesterday) (get-game-creation-time %)) (-> @games keys)))
+(defn get-stale-games [m]
+  (filter #(t/after? (t/yesterday) (get-game-creation-time %)) (-> @m keys)))
 
 ;; Create and Update Games
 
-(defn create-game! [id]
+(defn create-game! [m id]
   (setval (game-path id) {:state (prepare-game)
-                          :created-at (t/now)} games))
+                          :created-at (t/now)} m))
 
 (def reset-game! create-game!)
 
-(defn get-game! [id]
-  (when-not (contains? @games id)
-    (create-game! id))
-  (get-game-state id))
+(defn get-game! [m id]
+  (when-not (contains? @m id)
+    (create-game! m id))
+  (get-game-state m id))
 
-(defn delete-game! [id]
-  (setval (game-path id) NONE games))
+(defn delete-game! [m id]
+  (setval (game-path id) NONE m))
 
-(defn delete-all-games! []
-  (map delete-game! (keys @games)))
+(defn delete-all-games! [m]
+  (map delete-game! (keys @m)))
 
-(defn delete-stale-games! []
-  (map delete-game! (get-stale-games)))
+(defn delete-stale-games! [m]
+  (map #(delete-game! m %) (get-stale-games m)))
 
 (defn job []
   (when-not (empty? @games)
-    (delete-stale-games!)))
+    (delete-stale-games! games)))
 
 (scheduling/schedule job :every :day)
