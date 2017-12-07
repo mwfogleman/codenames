@@ -6,12 +6,14 @@
 
   :dependencies [[clj-time "0.14.0"]
                  [com.rpl/specter "1.0.3"]
+                 [com.taoensso/sente "1.11.0"]
                  [compojure "1.6.0"]
                  [hiccup "1.0.5"]
                  [metosin/compojure-api "2.0.0-alpha7"]
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"
                   :scope "provided"]
+                 [org.immutant/immutant-web "1.1.4"]
                  [org.immutant/scheduling "2.1.9"]
                  [reagent "0.7.0"]
                  [reagent-utils "0.2.1"]
@@ -21,9 +23,7 @@
                  [secretary "1.2.3"]
                  [venantius/accountant "0.2.0"
                   :exclusions [org.clojure/tools.reader]]
-                 [yogthos/config "0.9"]
-                 [com.taoensso/sente "1.11.0"]
-                 [org.immutant/immutant-web "1.1.4"]]
+                 [yogthos/config "0.9"]]
 
   :plugins [[lein-environ "1.0.2"]
             [lein-cljsbuild "1.1.5"]
