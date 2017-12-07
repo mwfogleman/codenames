@@ -13,8 +13,7 @@
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"
                   :scope "provided"]
-                 [org.immutant/immutant-web "1.1.4"]
-                 [org.immutant/scheduling "2.1.9"]
+                 [org.immutant/immutant "2.1.9"]
                  [reagent "0.7.0"]
                  [reagent-utils "0.2.1"]
                  [ring "1.6.2"]
