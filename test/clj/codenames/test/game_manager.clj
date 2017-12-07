@@ -24,13 +24,14 @@
 (deftest games-is-empty
   (is (empty? @g)))
 
-;; (deftest we-can-add-games
-;;   (manager/create-game! "test")
-;;   (is (contains? g "test")))
+(deftest we-can-add-games
+  (manager/create-game! g "test")
+  (is (contains? @g "test")))
 
-;; (deftest we-can-get-games
-;;   (let [k (set (keys (manager/get-game! "test")))]
-;;     (is (= k #{:starting-team :current-team :remaining :winning-team :round :words}))))
+(deftest we-can-get-games
+  (manager/create-game! g "test")
+  (let [k (set (keys (manager/get-game! g "test")))]
+    (is (= k #{:starting-team :current-team :remaining :winning-team :round :words}))))
 
 ;; (deftest we-can-reset-games
 ;;   (let [get-assassin      (fn [] (codenames.queries/get-the-assassin (-> @gmanager/games (get "test") :state)))
