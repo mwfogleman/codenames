@@ -7,18 +7,16 @@
             [com.rpl.specter :as S]
             [clojure.test :refer :all]))
 
-(defn setup []
-  (def g (atom {})))
+(def g (atom {}))
 
 (defn teardown []
   (reset! g {}))
 
 (defn each-fixture [f]
-  (setup)
   (f)
   (teardown))
 
-(use-fixtures :each once-fixture)
+(use-fixtures :each each-fixture)
 
 (defn get-test-assassin [] (codenames.queries/get-the-assassin (-> @g (get "test") :state)))
 
@@ -43,10 +41,10 @@
     ;; and in that edge case this test will fail
     (is (not= original-assassin new-assassin))))
 
-;; (deftest we-can-delete-all-games
-;;   (manager/delete-all-games!)
-;;   (is (empty? g)))
-
+(deftest we-can-delete-all-games
+  (manager/create-game! g "test")
+  (manager/delete-all-games! g)
+  (is (empty? @g)))
 
 ;; (setval (game-path "very stale") {:state (prepare-game)
 ;;                                   :created-at (t/date-time 1986 10 14 4 3 27 456)} games)
