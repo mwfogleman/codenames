@@ -19,15 +19,13 @@
   (select-any [(game-path id) :created-at] m))
 
 (defn get-stale-games [m]
-  (filter #(t/after? (t/yesterday) (get-game-creation-time %)) (-> @m keys)))
+  (filter #(t/after? (t/yesterday) (get-game-creation-time m %)) (-> @m keys)))
 
 ;; Create and Update Games
 
 (defn create-game! [m id]
   (setval (game-path id) {:state (prepare-game)
                           :created-at (t/now)} m))
-
-(def reset-game! create-game!)
 
 (defn get-game! [m id]
   (when-not (contains? @m id)
