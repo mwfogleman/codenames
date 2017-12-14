@@ -7,22 +7,21 @@
             [com.rpl.specter :as S]
             [clojure.test :refer :all]))
 
-(defn one-time-setup []
+(defn setup []
   (def g (atom {})))
 
-(defn one-time-teardown []
+(defn teardown []
   (reset! g {}))
 
-(defn once-fixture [f]
-  (one-time-setup)
+(defn each-fixture [f]
+  (setup)
   (f)
-  (one-time-teardown))
+  (teardown))
 
-;; register as a one-time callback
-(use-fixtures :once once-fixture)
+(use-fixtures :each once-fixture)
 
 (deftest games-is-empty
-  (is (empty? @g)))
+  (is (= @g {})))
 
 (deftest we-can-add-games
   (manager/create-game! g "test")
