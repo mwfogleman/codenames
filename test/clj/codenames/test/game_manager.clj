@@ -20,6 +20,8 @@
 
 (use-fixtures :each once-fixture)
 
+(defn get-test-assassin [] (codenames.queries/get-the-assassin (-> @g (get "test") :state)))
+
 (deftest games-is-empty
   (is (= @g {})))
 
@@ -32,15 +34,14 @@
   (let [k (set (keys (manager/get-game! g "test")))]
     (is (= k #{:starting-team :current-team :remaining :winning-team :round :words}))))
 
-;; (deftest we-can-reset-games
-;;   (let [get-assassin      (fn [] (codenames.queries/get-the-assassin (-> @gmanager/games (get "test") :state)))
-;;         g                 (manager/get-game! "test")
-;;         original-assassin (get-assassin)
-;;         _                 (manager/reset-game! "test")
-;;         new-assassin      (get-assassin)]
-;;     ;; there is an unlikely but possible edge case where the assassin is the same,
-;;     ;; and in that edge case this test will fail
-;;     (is (not= original-assassin new-assassin))))
+(deftest we-can-reset-games
+  (manager/create-game! g "test")
+  (let [original-assassin (get-test-assassin)
+        _                 (manager/create-game! g "test")
+        new-assassin      (get-test-assassin)]
+    ;; there is an unlikely but possible edge case where the assassin is the same,
+    ;; and in that edge case this test will fail
+    (is (not= original-assassin new-assassin))))
 
 ;; (deftest we-can-delete-all-games
 ;;   (manager/delete-all-games!)
