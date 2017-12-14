@@ -46,5 +46,7 @@
   (manager/delete-all-games! g)
   (is (empty? @g)))
 
-;; (setval (game-path "very stale") {:state (prepare-game)
-;;                                   :created-at (t/date-time 1986 10 14 4 3 27 456)} games)
+;; (com.rpl.specter/setval (manager/game-path "very stale") {:state (codenames.game/prepare-game)
+;;                                                           :created-at (clj-time.core/date-time 1986 10 14 4 3 27 456)} g)
+
+;; (manager/delete-stale-games! g)
