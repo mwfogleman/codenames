@@ -36,7 +36,7 @@
   (setval (game-path id) NONE m))
 
 (defn delete-all-games! [m]
-  (map delete-game! (keys @m)))
+  (map #(delete-game! m %) (keys @m)))
 
 (defn delete-stale-games! [m]
   (map #(delete-game! m %) (get-stale-games m)))
