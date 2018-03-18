@@ -41,4 +41,7 @@
        :path-params [id :- s/Str]
        :return Game
        :summary ""
-       (ok (get-game! id))))
+       (ok (get-game! id)))) ;; game-map -> websocket
+;; websocket, instead of returning map for game
+;; compojure api finding routes
+;; sente + compojure apio
