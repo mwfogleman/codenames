@@ -1,11 +1,133 @@
 (ns codenames.core
   (:require
-   [reagent.core :as reagent :refer [atom]]
+   [accountant.core :as accountant]
+   [clerk.core :as clerk]
+   [clojure.string :as str]
+   [codenames.game :as g]
+   [codenames.moves :as m]
+   [codenames.queries :as q]
    [reagent.dom :as rdom]
    [reagent.session :as session]
    [reitit.frontend :as reitit]
-   [clerk.core :as clerk]
-   [accountant.core :as accountant]))
+   [reagent.core :as reagent :refer [atom]]))
+
+;; -------------------------
+;; Views
+
+(defn title-bar []
+  [:div [:h2 "Codenames"]])
+
+(defn colorize-team [team]
+  (let [pr (if (= team :blue)
+             [:span.blue]
+             [:span.red])]
+    (->> team name (conj pr))))
+
+(defn game-status-bar [game]
+  (let [g      @game
+        turn   (q/get-current-team g)
+        winner (q/get-winner g)]
+    [:div#game-status
+     (if winner
+       [:span "The " (colorize-team winner) " team wins!"]
+       [:span "It's the " (colorize-team turn) " team's turn."])]))
+
+(defn remaining [game]
+  (fn []
+    (let [g      @game
+          red    (-> g :remaining :red)
+          r-span [:span.red red]
+          blue   (-> g :remaining :blue)
+          b-span [:span.blue blue]]
+      [:span#remaining
+       (if (> red blue)
+         [:span
+          r-span " - " b-span]
+         [:span
+          b-span " - " r-span])])))
+
+(defn next-turn-button [game]
+  (fn []
+    (let [g    @game
+          turn (q/get-current-team g)]
+      [:button#next-turn.game {:on-click #(swap! game m/next-turn!)}
+       "End the " (name turn) " team's turn."])))
+
+(defn turn-status-bar [game view]
+  (fn []
+    (let [g @game
+          v @view
+          w (q/winner? g)]
+      (if (and (= v :player) (false? w))
+        [:div
+         [remaining game]
+         [next-turn-button game]]
+        [remaining game]))))
+
+(defn view-toggle [view]
+  (fn []
+    (let [v @view]
+      [:button#view.game {:on-click #(swap! view m/switch-view!)}
+       (if (= v :player)
+         "Spymaster"
+         "Player")])))
+
+(defn reset-button [game]
+  (fn []
+    (let [g @game]
+      [:button#reset.game {:on-click #(reset! game (g/prepare-game))}
+       "Next Game"])))
+
+(defn gameplay-bar [game view]
+  (fn []
+    (let [g        @game
+          v        @view
+          in-play? (nil? (:winning-team g))]
+      [:div#gameplay-bar
+       (when in-play? [view-toggle view])
+       [reset-button game]])))
+
+(defn colorize [word identity]
+  (case identity
+    :blue     [:div.blue word]
+    :red      [:div.red word]
+    :assassin [:div.assassin word]
+    :neutral  [:div.neutral word]))
+
+(defn cell [game view x y]
+  (fn []
+    (let [g                                 @game
+          v                                 @view
+          {:keys [word identity revealed?]} (q/get-cell g x y)
+          winner                            (q/get-winner g)
+          w                                 [:span.word.revealed [colorize word identity]]]
+      (if (or (= v :spymaster) winner (true? revealed?))
+        w
+        [:button.word
+         {:on-click #(swap! game m/move! word)}
+         word]))))
+
+(defn grid [game view]
+  [:table
+   (for [y (range 5)]
+     [:tr
+      (for [x (range 5)]
+        [:td
+         [cell game view x y]])])])
+
+(defn main-panel [game view]
+  (fn []
+    (let [g      @game
+          v      @view
+          turn   (q/get-current-team g)
+          winner (q/get-winner g)]
+      [:div
+       [game-status-bar game]
+       [turn-status-bar game view]
+       [:center
+        [:p
+         [grid game view]
+         [gameplay-bar game view]]]])))
 
 ;; -------------------------
 ;; Routes
@@ -13,10 +135,8 @@
 (def router
   (reitit/router
    [["/" :index]
-    ["/items"
-     ["" :items]
-     ["/:item-id" :item]]
-    ["/about" :about]]))
+    ["/game"
+     ["" :game]]]))
 
 (defn path-for [route & [params]]
   (if params
@@ -27,37 +147,15 @@
 ;; Page components
 
 (defn home-page []
+  [:div [:h2 "Welcome to Codenames"]
+   [:div [:a {:href "/game"} "Play a game!"]]])
+
+(defn game-page []
   (fn []
-    [:span.main
-     [:h1 "Welcome to codenames"]
-     [:ul
-      [:li [:a {:href (path-for :items)} "Items of codenames"]]
-      [:li [:a {:href "/broken/link"} "Broken link"]]]]))
-
-
-
-(defn items-page []
-  (fn []
-    [:span.main
-     [:h1 "The items of codenames"]
-     [:ul (map (fn [item-id]
-                 [:li {:name (str "item-" item-id) :key (str "item-" item-id)}
-                  [:a {:href (path-for :item {:item-id item-id})} "Item: " item-id]])
-               (range 1 60))]]))
-
-
-(defn item-page []
-  (fn []
-    (let [routing-data (session/get :route)
-          item (get-in routing-data [:route-params :item-id])]
-      [:span.main
-       [:h1 (str "Item " item " of codenames")]
-       [:p [:a {:href (path-for :items)} "Back to the list of items"]]])))
-
-
-(defn about-page []
-  (fn [] [:span.main
-          [:h1 "About codenames"]]))
+    (let [game (atom (g/prepare-game))
+          view (atom :player)]
+      [:div [title-bar]
+       [main-panel game view]])))
 
 
 ;; -------------------------
@@ -66,11 +164,7 @@
 (defn page-for [route]
   (case route
     :index #'home-page
-    :about #'about-page
-    :items #'items-page
-    :item #'item-page))
-
-
+    :game #'game-page))
 ;; -------------------------
 ;; Page mounting component
 
@@ -79,12 +173,11 @@
     (let [page (:current-page (session/get :route))]
       [:div
        [:header
-        [:p [:a {:href (path-for :index)} "Home"] " | "
-         [:a {:href (path-for :about)} "About codenames"]]]
-       [page]
-       [:footer
-        [:p "codenames was generated by the "
-         [:a {:href "https://github.com/reagent-project/reagent-template"} "Reagent Template"] "."]]])))
+        [:p [:a {:href (path-for :index)} "Home"]]
+        [page]
+        [:footer
+         [:p "codenames was generated by the "
+          [:a {:href "https://github.com/reagent-project/reagent-template"} "Reagent Template"] "."]]]])))
 
 ;; -------------------------
 ;; Initialize app
@@ -103,11 +196,9 @@
         (reagent/after-render clerk/after-render!)
         (session/put! :route {:current-page (page-for current-page)
                               :route-params route-params})
-        (clerk/navigate-page! path)
-        ))
+        (clerk/navigate-page! path)))
     :path-exists?
     (fn [path]
       (boolean (reitit/match-by-path router path)))})
   (accountant/dispatch-current!)
   (mount-root))
-
