@@ -1,34 +1,112 @@
 .body-container {
-  font-family: 'Helvetica Neue', Verdana, Helvetica, Arial, sans-serif;
-  max-width: 640px;
-  margin: 0 auto;
-  padding-top: 72px;
-  -webkit-font-smoothing: antialiased;
-  font-size: 1.125em;
-  color: #333;
-  line-height: 1.5em;
+    font-family: 'Roboto', verdana, sans-serif;
+    max-width: 700px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.125em;
+    color: #333;
+    /* line-height: 1.5em; */
 }
 
 h1, h2, h3 {
-  color: #000;
+    color: #000;
 }
+
 h1 {
-  font-size: 2.5em
+    font-size: 2.5em
 }
 
 h2 {
-  font-size: 2em
+    font-size: 2em;
+    text-align: center;
+    text-transform: uppercase;
 }
 
 h3 {
-  font-size: 1.5em
+    font-size: 1.5em
 }
 
 a {
-  text-decoration: none;
-  color: #09f;
+    text-decoration: none;
+    color: #09f;
 }
 
 a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
+}
+
+button {
+    cursor: pointer;
+}
+
+#game-status {
+    text-align: center;
+}
+
+#remaining {
+    margin-left: 22px;
+    text-align: left;
+}
+
+#button .game {
+    border: 1px #DDD solid;
+    border-radius: 5px 5px 5px 5px;
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    padding: 5px;
+    background: #EEE;
+}
+
+#next-turn {
+    padding: 5px;
+    float: right; 
+    margin-right: 22px;
+}
+
+#gameplay-bar {
+    margin-top: 0.3em;
+    margin-bottom: 50px;
+}
+
+#view {
+    float: left;
+    margin-left: 22px;
+}
+
+#reset{
+    float: right;
+    margin-right: 22px;
+}
+
+.word {
+    width: 120px;
+    height: 80px;
+    margin: 5px;
+    display: inline-block;
+    text-align: center;
+    background-color: #e7e7e7;
+    vertical-align: middle;
+    border: none;
+    font: 13.3333px Monospace;
+    line-height: 80px;
+}
+
+.revealed {
+    line-height: 82px;
+}
+
+.red {
+    color: #ff0000;
+}
+
+.blue {
+    color: #0e2df4;
+}
+
+.assassin {
+    color: #000000;
+}
+
+.neutral {
+    color: #757575;
 }
