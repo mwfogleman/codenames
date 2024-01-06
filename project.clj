@@ -89,7 +89,6 @@
                                   [figwheel-sidecar "0.5.20"]
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [pjstadig/humane-test-output "0.11.0"]
-                                  [prone "1.1.4"]
                                   [ring/ring-devel "1.11.0"]
                                   [ring/ring-mock "0.4.0"]]
 
