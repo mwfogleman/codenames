@@ -6,6 +6,7 @@
 
   :dependencies [[cljsjs/react "18.2.0-1"]
                  [cljsjs/react-dom "18.2.0-1"]
+                 [com.rpl/specter "1.1.4"]
                  [hiccup "1.0.5"]
                  [metosin/reitit "0.6.0"]
                  [org.clojure/clojure "1.11.1"]
