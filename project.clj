@@ -8,6 +8,7 @@
                  [cljsjs/react-dom "18.2.0-1"]
                  [com.rpl/specter "1.1.4"]
                  [hiccup "1.0.5"]
+                 [http-kit "2.3.0"]
                  [metosin/reitit "0.6.0"]
                  [org.clojure/clojure "1.11.1"]
                  [org.clojure/clojurescript "1.11.60"
